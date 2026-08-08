@@ -1,0 +1,123 @@
+[NbConvertApp] Converting notebook notebooks/hospital_readmission_ml_pipeline.ipynb to notebook
+/home/schrondinger/Desktop/Gabriel/.venv/lib/python3.12/site-packages/nbformat/validator.py:434: MissingIDFieldWarning: Cell is missing an id field, this will become a hard error in future nbformat versions. You may want to use `normalize()` on your notebooks before validations (available since nbformat 5.1.4). Previous versions of nbformat are fixing this issue transparently, and will stop doing so in the future.
+  _validate(nbdict, ref, version, version_minor, relax_add_props)
+[IPKernelApp] WARNING | Kernel is running over TCP without encryption. All communication (including code and outputs) is sent in plain text and is susceptible to eavesdropping. Use IPC transport or launch with kernel manager-provisioned CurveZMQ keys to enable transport encryption.
+Traceback (most recent call last):
+  File "/home/schrondinger/Desktop/Gabriel/.venv/bin/jupyter-nbconvert", line 8, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/home/schrondinger/Desktop/Gabriel/.venv/lib/python3.12/site-packages/jupyter_core/application.py", line 284, in launch_instance
+    super().launch_instance(argv=argv, **kwargs)
+  File "/home/schrondinger/Desktop/Gabriel/.venv/lib/python3.12/site-packages/traitlets/config/application.py", line 1080, in launch_instance
+    app.start()
+  File "/home/schrondinger/Desktop/Gabriel/.venv/lib/python3.12/site-packages/nbconvert/nbconvertapp.py", line 420, in start
+    self.convert_notebooks()
+  File "/home/schrondinger/Desktop/Gabriel/.venv/lib/python3.12/site-packages/nbconvert/nbconvertapp.py", line 597, in convert_notebooks
+    self.convert_single_notebook(notebook_filename)
+  File "/home/schrondinger/Desktop/Gabriel/.venv/lib/python3.12/site-packages/nbconvert/nbconvertapp.py", line 563, in convert_single_notebook
+    output, resources = self.export_single_notebook(
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/schrondinger/Desktop/Gabriel/.venv/lib/python3.12/site-packages/nbconvert/nbconvertapp.py", line 487, in export_single_notebook
+    output, resources = self.exporter.from_filename(
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/schrondinger/Desktop/Gabriel/.venv/lib/python3.12/site-packages/nbconvert/exporters/exporter.py", line 201, in from_filename
+    return self.from_file(f, resources=resources, **kw)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/schrondinger/Desktop/Gabriel/.venv/lib/python3.12/site-packages/nbconvert/exporters/exporter.py", line 220, in from_file
+    return self.from_notebook_node(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/schrondinger/Desktop/Gabriel/.venv/lib/python3.12/site-packages/nbconvert/exporters/notebook.py", line 36, in from_notebook_node
+    nb_copy, resources = super().from_notebook_node(nb, resources, **kw)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/schrondinger/Desktop/Gabriel/.venv/lib/python3.12/site-packages/nbconvert/exporters/exporter.py", line 154, in from_notebook_node
+    nb_copy, resources = self._preprocess(nb_copy, resources)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/schrondinger/Desktop/Gabriel/.venv/lib/python3.12/site-packages/nbconvert/exporters/exporter.py", line 353, in _preprocess
+    nbc, resc = preprocessor(nbc, resc)
+                ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/schrondinger/Desktop/Gabriel/.venv/lib/python3.12/site-packages/nbconvert/preprocessors/base.py", line 48, in __call__
+    return self.preprocess(nb, resources)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/schrondinger/Desktop/Gabriel/.venv/lib/python3.12/site-packages/nbconvert/preprocessors/execute.py", line 103, in preprocess
+    self.preprocess_cell(cell, resources, index)
+  File "/home/schrondinger/Desktop/Gabriel/.venv/lib/python3.12/site-packages/nbconvert/preprocessors/execute.py", line 124, in preprocess_cell
+    cell = self.execute_cell(cell, index, store_history=True)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/schrondinger/Desktop/Gabriel/.venv/lib/python3.12/site-packages/jupyter_core/utils/__init__.py", line 165, in wrapped
+    return loop.run_until_complete(inner)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 687, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/schrondinger/Desktop/Gabriel/.venv/lib/python3.12/site-packages/nbclient/client.py", line 1062, in async_execute_cell
+    await self._check_raise_for_error(cell, cell_index, exec_reply)
+  File "/home/schrondinger/Desktop/Gabriel/.venv/lib/python3.12/site-packages/nbclient/client.py", line 918, in _check_raise_for_error
+    raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
+nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
+------------------
+from app.explainability.explanation_service import build_full_explanations, list_explainable_models
+
+with flask_app_context():
+    explainable = list_explainable_models(USER_ID)
+    interpret_model_id = BEST_MODEL_ID or explainable[0]["id"]
+    explanation = build_full_explanations(USER_ID, interpret_model_id, test_row_index=0)
+    for section_name, charts in explanation.get("charts", {}).items():
+        if isinstance(charts, dict):
+            for name, figure in charts.items():
+                if figure:
+                    print(section_name, name)
+                    pio.show(figure, renderer="notebook_connected")
+
+if TUNED_EVAL.get("charts", {}).get("feature_importance"):
+    print("--- tuned model feature importance ---")
+    pio.show(TUNED_EVAL["charts"]["feature_importance"], renderer="notebook_connected")
+
+PIPELINE["Model Interpretation"] = "complete"
+
+------------------
+
+----- stdout -----
+2026-08-08 23:33:56 | INFO     | app | Application started in unknown mode
+----- stdout -----
+summary data
+------------------
+
+[31m---------------------------------------------------------------------------[39m
+[31mValueError[39m                                Traceback (most recent call last)
+[36mCell[39m[36m [39m[32mIn[14][39m[32m, line 12[39m
+[32m      8[39m         [38;5;28;01mif[39;00m isinstance(charts, dict):
+[32m      9[39m             [38;5;28;01mfor[39;00m name, figure [38;5;28;01min[39;00m charts.items():
+[32m     10[39m                 [38;5;28;01mif[39;00m figure:
+[32m     11[39m                     print(section_name, name)
+[32m---> [39m[32m12[39m                     pio.show(figure, renderer=[33m"notebook_connected"[39m)
+[32m     13[39m 
+[32m     14[39m [38;5;28;01mif[39;00m TUNED_EVAL.get([33m"charts"[39m, {}).get([33m"feature_importance"[39m):
+[32m     15[39m     print([33m"--- tuned model feature importance ---"[39m)
+
+[36mFile [39m[32m~/Desktop/Gabriel/.venv/lib/python3.12/site-packages/plotly/io/_renderers.py:383[39m, in [36mshow[39m[34m(fig, renderer, validate, **kwargs)[39m
+[32m    348[39m [38;5;28;01mdef[39;00m[38;5;250m [39m[34mshow[39m(fig, renderer=[38;5;28;01mNone[39;00m, validate=[38;5;28;01mTrue[39;00m, **kwargs):
+[32m    349[39m [38;5;250m    [39m[33;03m"""[39;00m
+[32m    350[39m [33;03m    Show a figure using either the default renderer(s) or the renderer(s)[39;00m
+[32m    351[39m [33;03m    specified by the renderer argument[39;00m
+[32m   (...)[39m[32m    381[39m [33;03m    None[39;00m
+[32m    382[39m [33;03m    """[39;00m
+[32m--> [39m[32m383[39m     fig_dict = [30;43mvalidate_coerce_fig_to_dict[39;49m[30;43m([39;49m[30;43mfig[39;49m[30;43m,[39;49m[30;43m [39;49m[30;43mvalidate[39;49m[30;43m)[39;49m
+[32m    385[39m     [38;5;66;03m# Mimetype renderers[39;00m
+[32m    386[39m     bundle = renderers._build_mime_bundle(fig_dict, renderers_string=renderer, **kwargs)
+
+[36mFile [39m[32m~/Desktop/Gabriel/.venv/lib/python3.12/site-packages/plotly/io/_utils.py:20[39m, in [36mvalidate_coerce_fig_to_dict[39m[34m(fig, validate)[39m
+[32m     18[39m         fig_dict = fig.to_plotly_json()
+[32m     19[39m     [38;5;28;01melse[39;00m:
+[32m---> [39m[32m20[39m         [38;5;28;01mraise[39;00m [38;5;167;01mValueError[39;00m(
+[32m     21[39m [38;5;250m            [39m[33;03m"""[39;00m
+[32m     22[39m [33;03mThe fig parameter must be a dict or Figure.[39;00m
+[32m     23[39m [33;03m    Received value of type {typ}: {v}"""[39;00m.format(
+[32m     24[39m                 typ=[38;5;28mtype[39m(fig), v=fig
+[32m     25[39m             )
+[32m     26[39m         )
+[32m     27[39m     [38;5;28;01mreturn[39;00m fig_dict
+
+[31mValueError[39m: 
+The fig parameter must be a dict or Figure.
+    Received value of type <class 'list'>: [{'hovertemplate': 'diagnosis_Hypertension<br>SHAP: %{x:.4f}<extra></extra>', 'marker': {'color': [0.0, 1.0, 0.0], 'colorbar': {'title': {'text': 'Feature value'}}, 'colorscale': [[0.0, 'rgb(103,0,31)'], [0.1, 'rgb(178,24,43)'], [0.2, 'rgb(214,96,77)'], [0.3, 'rgb(244,165,130)'], [0.4, 'rgb(253,219,199)'], [0.5, 'rgb(247,247,247)'], [0.6, 'rgb(209,229,240)'], [0.7, 'rgb(146,197,222)'], [0.8, 'rgb(67,147,195)'], [0.9, 'rgb(33,102,172)'], [1.0, 'rgb(5,48,97)']], 'showscale': False, 'size': 8}, 'mode': 'markers', 'name': 'diagnosis_Hypertension', 'x': [0.0044444444444444444, -0.0022222222222222222, 0.0011111111111111111], 'y': [0.13697802427798167, -0.03056078012397384, 0.17929895995569123], 'type': 'scatter'}, {'hovertemplate': 'diagnosis_Diabetes<br>SHAP: %{x:.4f}<extra></extra>', 'marker': {'color': [1.0, 0.0, 0.0], 'colorbar': {'title': {'text': 'Feature value'}}, 'colorscale': [[0.0, 'rgb(103,0,31)'], [0.1, 'rgb(178,24,43)'], [0.2, 'rgb(214,96,77)'], [0.3, 'rgb(244,165,130)'], [0.4, 'rgb(253,219,199)'], [0.5, 'rgb(247,247,247)'], [0.6, 'rgb(209,229,240)'], [0.7, 'rgb(146,197,222)'], [0.8, 'rgb(67,147,195)'], [0.9, 'rgb(33,102,172)'], [1.0, 'rgb(5,48,97)']], 'showscale': False, 'size': 8}, 'mode': 'markers', 'name': 'diagnosis_Diabetes', 'x': [0.008123456790123454, 0.0018148148148148145, 0.0018148148148148145], 'y': [1.098684014529682, 0.7970886739438248, 1.2378111758183779], 'type': 'scatter'}, {'hovertemplate': 'patient_id<br>SHAP: %{x:.4f}<extra></extra>', 'marker': {'color': [1.013889554129062, 0.1448413648755802, 0.7242068243779014], 'colorbar': {'title': {'text': 'Feature value'}}, 'colorscale': [[0.0, 'rgb(103,0,31)'], [0.1, 'rgb(178,24,43)'], [0.2, 'rgb(214,96,77)'], [0.3, 'rgb(244,165,130)'], [0.4, 'rgb(253,219,199)'], [0.5, 'rgb(247,247,247)'], [0.6, 'rgb(209,229,240)'], [0.7, 'rgb(146,197,222)'], [0.8, 'rgb(67,147,195)'], [0.9, 'rgb(33,102,172)'], [1.0, 'rgb(5,48,97)']], 'showscale': False, 'size': 8}, 'mode': 'markers', 'name': 'patient_id', 'x': [-0.006203703703703702, 0.03083333333333333, 0.010833333333333334], 'y': [2.1305698509951765, 2.143032152638477, 1.8140568163377728], 'type': 'scatter'}, {'hovertemplate': 'diagnosis_Asthma<br>SHAP: %{x:.4f}<extra></extra>', 'marker': {'color': [0.0, 0.0, 1.0], 'colorbar': {'title': {'text': 'Feature value'}}, 'colorscale': [[0.0, 'rgb(103,0,31)'], [0.1, 'rgb(178,24,43)'], [0.2, 'rgb(214,96,77)'], [0.3, 'rgb(244,165,130)'], [0.4, 'rgb(253,219,199)'], [0.5, 'rgb(247,247,247)'], [0.6, 'rgb(209,229,240)'], [0.7, 'rgb(146,197,222)'], [0.8, 'rgb(67,147,195)'], [0.9, 'rgb(33,102,172)'], [1.0, 'rgb(5,48,97)']], 'showscale': False, 'size': 8}, 'mode': 'markers', 'name': 'diagnosis_Asthma', 'x': [0.01584920634920635, 0.011182539682539683, -0.03388888888888889], 'y': [2.9751929689477836, 2.9353990121162905, 3.213382494424301], 'type': 'scatter'}, {'hovertemplate': 'diagnosis_Heart Failure<br>SHAP: %{x:.4f}<extra></extra>', 'marker': {'color': [0.0, 0.0, 0.0], 'colorbar': {'title': {'text': 'Feature value'}}, 'colorscale': [[0.0, 'rgb(103,0,31)'], [0.1, 'rgb(178,24,43)'], [0.2, 'rgb(214,96,77)'], [0.3, 'rgb(244,165,130)'], [0.4, 'rgb(253,219,199)'], [0.5, 'rgb(247,247,247)'], [0.6, 'rgb(209,229,240)'], [0.7, 'rgb(146,197,222)'], [0.8, 'rgb(67,147,195)'], [0.9, 'rgb(33,102,172)'], [1.0, 'rgb(5,48,97)']], 'showscale': False, 'size': 8}, 'mode': 'markers', 'name': 'diagnosis_Heart Failure', 'x': [-0.022432098765432097, -0.049851851851851856, -0.04485185185185186], 'y': [4.071932560040333, 4.161380806635415, 3.9717070994136656], 'type': 'scatter'}, {'hovertemplate': 'age<br>SHAP: %{x:.4f}<extra></extra>', 'marker': {'color': [-0.0332411247657269, -0.8310281191431673, -1.4293683649262476], 'colorbar': {'title': {'text': 'Feature value'}}, 'colorscale': [[0.0, 'rgb(103,0,31)'], [0.1, 'rgb(178,24,43)'], [0.2, 'rgb(214,96,77)'], [0.3, 'rgb(244,165,130)'], [0.4, 'rgb(253,219,199)'], [0.5, 'rgb(247,247,247)'], [0.6, 'rgb(209,229,240)'], [0.7, 'rgb(146,197,222)'], [0.8, 'rgb(67,147,195)'], [0.9, 'rgb(33,102,172)'], [1.0, 'rgb(5,48,97)']], 'showscale': False, 'size': 8}, 'mode': 'markers', 'name': 'age', 'x': [-0.10857142857142857, -0.12857142857142856, -0.12000000000000001], 'y': [4.863619360892389, 5.027292393507917, 4.781908628052087], 'type': 'scatter'}, {'hovertemplate': 'gender_M<br>SHAP: %{x:.4f}<extra></extra>', 'marker': {'color': [0.0, 1.0, 1.0], 'colorbar': {'title': {'text': 'Feature value'}}, 'colorscale': [[0.0, 'rgb(103,0,31)'], [0.1, 'rgb(178,24,43)'], [0.2, 'rgb(214,96,77)'], [0.3, 'rgb(244,165,130)'], [0.4, 'rgb(253,219,199)'], [0.5, 'rgb(247,247,247)'], [0.6, 'rgb(209,229,240)'], [0.7, 'rgb(146,197,222)'], [0.8, 'rgb(67,147,195)'], [0.9, 'rgb(33,102,172)'], [1.0, 'rgb(5,48,97)']], 'showscale': False, 'size': 8}, 'mode': 'markers', 'name': 'gender_M', 'x': [0.10351851851851854, -0.14388888888888887, -0.14722222222222223], 'y': [6.163815585996291, 6.065832199561032, 6.129043870042687], 'type': 'scatter'}, {'hovertemplate': 'gender_F<br>SHAP: %{x:.4f}<extra></extra>', 'marker': {'color': [1.0, 0.0, 0.0], 'colorbar': {'title': {'text': 'Feature value'}}, 'colorscale': [[0.0, 'rgb(103,0,31)'], [0.1, 'rgb(178,24,43)'], [0.2, 'rgb(214,96,77)'], [0.3, 'rgb(244,165,130)'], [0.4, 'rgb(253,219,199)'], [0.5, 'rgb(247,247,247)'], [0.6, 'rgb(209,229,240)'], [0.7, 'rgb(146,197,222)'], [0.8, 'rgb(67,147,195)'], [0.9, 'rgb(33,102,172)'], [1.0, 'rgb(5,48,97)']], 'showscale': True, 'size': 8}, 'mode': 'markers', 'name': 'gender_F', 'x': [0.15193827160493828, -0.21262962962962964, -0.20112962962962966], 'y': [6.927262984064934, 7.235349012197451, 7.196560560661099], 'type': 'scatter'}]
+

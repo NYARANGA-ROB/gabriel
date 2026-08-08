@@ -22,7 +22,7 @@ MIN_DATASET_ROWS = 200_000
 DEFAULT_TARGET_ROWS = 200_000
 DEFAULT_CSV = DATA_DIR / "diabetes_readmission_200k.csv"
 TARGET_COLUMN = "readmitted"
-USER_EMAIL = "nyarangaro@gmail.com"  # change to your login email when syncing to the web app
+USER_EMAIL = "gabriel.odiah@gmail.com"  # change to your login email when syncing to the web app
 
 ML_LIFECYCLE_STAGES = [
     "Problem Definition",
@@ -60,9 +60,15 @@ def ensure_project_paths() -> None:
         folder.mkdir(parents=True, exist_ok=True)
 
 
-def validate_dataset_rows(data: pd.DataFrame | Path, *, minimum: int = MIN_DATASET_ROWS) -> int:
+def validate_dataset_rows(
+    data: pd.DataFrame | Path | int,
+    *,
+    minimum: int = MIN_DATASET_ROWS,
+) -> int:
     """Ensure the dataset meets the minimum row requirement."""
-    if isinstance(data, Path):
+    if isinstance(data, int):
+        row_count = data
+    elif isinstance(data, Path):
         row_count = sum(1 for _ in open(data)) - 1
     else:
         row_count = len(data)

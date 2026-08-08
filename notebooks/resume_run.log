@@ -1,0 +1,246 @@
+2026-08-08 23:38:08 | INFO     | app | Application started in unknown mode
+Restored: {'user_id': 1, 'dataset_id': 6, 'processed_id': 8, 'best_model_id': 35, 'rows': 200000}
+saved /home/schrondinger/Desktop/Gabriel/notebooks/figures/eda_missing_values.html
+saved /home/schrondinger/Desktop/Gabriel/notebooks/figures/eda_correlation_heatmap.html
+saved /home/schrondinger/Desktop/Gabriel/notebooks/figures/eda_class_distribution.html
+saved /home/schrondinger/Desktop/Gabriel/notebooks/figures/eda_feature_distribution.html
+saved /home/schrondinger/Desktop/Gabriel/notebooks/figures/eda_histogram.html
+saved /home/schrondinger/Desktop/Gabriel/notebooks/figures/eda_boxplot.html
+saved /home/schrondinger/Desktop/Gabriel/notebooks/figures/eda_scatter_plot.html
+saved /home/schrondinger/Desktop/Gabriel/notebooks/figures/eda_target_rate_by_category.html
+saved /home/schrondinger/Desktop/Gabriel/notebooks/figures/eda_categorical_overview.html
+saved /home/schrondinger/Desktop/Gabriel/notebooks/figures/eda_numeric_summary.html
+saved /home/schrondinger/Desktop/Gabriel/notebooks/figures/comparison_roc_comparison.html
+saved /home/schrondinger/Desktop/Gabriel/notebooks/figures/comparison_pr_comparison.html
+saved /home/schrondinger/Desktop/Gabriel/notebooks/figures/comparison_roc_auc.html
+saved /home/schrondinger/Desktop/Gabriel/notebooks/figures/comparison_accuracy.html
+saved /home/schrondinger/Desktop/Gabriel/notebooks/figures/comparison_precision.html
+saved /home/schrondinger/Desktop/Gabriel/notebooks/figures/comparison_recall.html
+saved /home/schrondinger/Desktop/Gabriel/notebooks/figures/comparison_f1_score.html
+saved /home/schrondinger/Desktop/Gabriel/notebooks/figures/comparison_training_time.html
+saved /home/schrondinger/Desktop/Gabriel/notebooks/figures/comparison_prediction_time.html
+saved /home/schrondinger/Desktop/Gabriel/notebooks/figures/tuned_confusion_matrix.html
+saved /home/schrondinger/Desktop/Gabriel/notebooks/figures/tuned_normalized_confusion_matrix.html
+saved /home/schrondinger/Desktop/Gabriel/notebooks/figures/tuned_prediction_distribution.html
+saved /home/schrondinger/Desktop/Gabriel/notebooks/figures/tuned_feature_importance.html
+saved /home/schrondinger/Desktop/Gabriel/notebooks/figures/tuned_roc_curve.html
+saved /home/schrondinger/Desktop/Gabriel/notebooks/figures/tuned_precision_recall_curve.html
+saved /home/schrondinger/Desktop/Gabriel/notebooks/figures/tuned_calibration.html
+2026-08-08 23:38:19 | INFO     | app | Application started in unknown mode
+/home/schrondinger/Desktop/Gabriel/.venv/lib/python3.12/site-packages/nbformat/validator.py:434: MissingIDFieldWarning:
+
+Cell is missing an id field, this will become a hard error in future nbformat versions. You may want to use `normalize()` on your notebooks before validations (available since nbformat 5.1.4). Previous versions of nbformat are fixing this issue transparently, and will stop doing so in the future.
+
+Using model 35
+Full SHAP/LIME failed (1); falling back to global SHAP only.
+saved /home/schrondinger/Desktop/Gabriel/notebooks/figures/explain_summary.html
+saved /home/schrondinger/Desktop/Gabriel/notebooks/figures/explain_feature_importance.html
+saved /home/schrondinger/Desktop/Gabriel/notebooks/figures/explain_dependence.html
+Smoke prediction: {'model_id': 35, 'model_name': 'XGBoost', 'model_label': 'XGBoost #35', 'dataset_name': 'diabetes_readmission_200k.csv', 'prediction': 0, 'probability': 0.3409885764122009, 'probability_percent': 34.1, 'risk_level': 'Low', 'risk_badge_class': 'success', 'recommendation': 'Standard discharge planning is appropriate. Reinforce routine primary care follow-up and patient education on warning signs.', 'readmission_label': 'Unlikely readmission', 'prediction_time_ms': 2.99, 'mapped_fields': {'age': 4.0, 'gender': 0.0, 'race': 2.0, 'admission_type': 0.0, 'discharge_disposition': 2.0, 'time_in_hospital': -1.138971925603626, 'number_of_procedures': -0.1997693470481669, 'number_of_medications': 0.7342517200720692, 'emergency_visits': -0.2060737445137986, 'outpatient_visits': -0.2915194719212689, 'previous_admissions': -0.5054212250640963, 'primary_diagnosis': 500.0, 'secondary_diagnosis': 498.0, 'diabetes_medication': 1.0, 'insulin': 1.0, 'a1c_result': 3.0, 'max_glucose_serum': 3.0}, 'used_feature_count': 25}
+Pipeline state saved: /home/schrondinger/Desktop/Gabriel/data/pipeline_state.json
+Logged predictions: 1
+saved /home/schrondinger/Desktop/Gabriel/notebooks/figures/analytics_risk_distribution.html
+saved /home/schrondinger/Desktop/Gabriel/notebooks/figures/analytics_prediction_trends.html
+saved /home/schrondinger/Desktop/Gabriel/notebooks/figures/analytics_monthly_statistics.html
+saved /home/schrondinger/Desktop/Gabriel/notebooks/figures/analytics_feature_importance.html
+2026-08-08 23:38:59 | DEBUG    | asyncio | Using selector: EpollSelector
+2026-08-08 23:38:59 | DEBUG    | traitlets | Instantiating kernel 'Python 3 (ipykernel)' with kernel provisioner: local-provisioner
+2026-08-08 23:38:59 | DEBUG    | traitlets | Starting kernel: ['/home/schrondinger/Desktop/Gabriel/.venv/bin/python', '-m', 'ipykernel_launcher', '-f', '/tmp/tmpj3_gbsii.json', '--HistoryManager.hist_file=:memory:']
+2026-08-08 23:38:59 | DEBUG    | traitlets | Connecting to: tcp://127.0.0.1:33673
+2026-08-08 23:38:59 | DEBUG    | traitlets | connecting iopub channel to tcp://127.0.0.1:34379
+2026-08-08 23:38:59 | DEBUG    | traitlets | Connecting to: tcp://127.0.0.1:34379
+2026-08-08 23:38:59 | DEBUG    | traitlets | connecting shell channel to tcp://127.0.0.1:52615
+2026-08-08 23:38:59 | DEBUG    | traitlets | Connecting to: tcp://127.0.0.1:52615
+2026-08-08 23:38:59 | DEBUG    | traitlets | connecting stdin channel to tcp://127.0.0.1:54167
+2026-08-08 23:38:59 | DEBUG    | traitlets | Connecting to: tcp://127.0.0.1:54167
+2026-08-08 23:38:59 | DEBUG    | traitlets | connecting heartbeat channel to tcp://127.0.0.1:58499
+2026-08-08 23:38:59 | DEBUG    | asyncio | Using selector: EpollSelector
+2026-08-08 23:38:59 | DEBUG    | traitlets | connecting control channel to tcp://127.0.0.1:33673
+2026-08-08 23:38:59 | DEBUG    | traitlets | Connecting to: tcp://127.0.0.1:33673
+[IPKernelApp] WARNING | Kernel is running over TCP without encryption. All communication (including code and outputs) is sent in plain text and is susceptible to eavesdropping. Use IPC transport or launch with kernel manager-provisioned CurveZMQ keys to enable transport encryption.
+2026-08-08 23:39:00 | INFO     | traitlets | Executing notebook with kernel: python3
+2026-08-08 23:39:00 | DEBUG    | traitlets | Skipping non-executing cell 0
+2026-08-08 23:39:00 | DEBUG    | traitlets | Executing cell:
+pass  # skipped; artefacts restored by resume_from_interpretation.py
+
+2026-08-08 23:39:00 | DEBUG    | traitlets | msg_type: status
+2026-08-08 23:39:00 | DEBUG    | traitlets | content: {'execution_state': 'busy'}
+2026-08-08 23:39:00 | DEBUG    | traitlets | msg_type: execute_input
+2026-08-08 23:39:00 | DEBUG    | traitlets | content: {'code': 'pass  # skipped; artefacts restored by resume_from_interpretation.py\n', 'execution_count': 1}
+2026-08-08 23:39:00 | DEBUG    | traitlets | msg_type: status
+2026-08-08 23:39:00 | DEBUG    | traitlets | content: {'execution_state': 'idle'}
+2026-08-08 23:39:00 | DEBUG    | traitlets | Skipping non-executing cell 2
+2026-08-08 23:39:00 | DEBUG    | traitlets | Executing cell:
+pass  # skipped; artefacts restored by resume_from_interpretation.py
+
+2026-08-08 23:39:00 | DEBUG    | traitlets | msg_type: status
+2026-08-08 23:39:00 | DEBUG    | traitlets | content: {'execution_state': 'busy'}
+2026-08-08 23:39:00 | DEBUG    | traitlets | msg_type: execute_input
+2026-08-08 23:39:00 | DEBUG    | traitlets | content: {'code': 'pass  # skipped; artefacts restored by resume_from_interpretation.py\n', 'execution_count': 2}
+2026-08-08 23:39:00 | DEBUG    | traitlets | msg_type: status
+2026-08-08 23:39:00 | DEBUG    | traitlets | content: {'execution_state': 'idle'}
+2026-08-08 23:39:00 | DEBUG    | traitlets | Skipping non-executing cell 4
+2026-08-08 23:39:00 | DEBUG    | traitlets | Executing cell:
+pass  # skipped; artefacts restored by resume_from_interpretation.py
+
+2026-08-08 23:39:00 | DEBUG    | traitlets | msg_type: status
+2026-08-08 23:39:00 | DEBUG    | traitlets | content: {'execution_state': 'busy'}
+2026-08-08 23:39:00 | DEBUG    | traitlets | msg_type: execute_input
+2026-08-08 23:39:00 | DEBUG    | traitlets | content: {'code': 'pass  # skipped; artefacts restored by resume_from_interpretation.py\n', 'execution_count': 3}
+2026-08-08 23:39:00 | DEBUG    | traitlets | msg_type: status
+2026-08-08 23:39:00 | DEBUG    | traitlets | content: {'execution_state': 'idle'}
+2026-08-08 23:39:00 | DEBUG    | traitlets | Skipping non-executing cell 6
+2026-08-08 23:39:00 | DEBUG    | traitlets | Executing cell:
+pass  # skipped; artefacts restored by resume_from_interpretation.py
+
+2026-08-08 23:39:00 | DEBUG    | traitlets | msg_type: status
+2026-08-08 23:39:00 | DEBUG    | traitlets | content: {'execution_state': 'busy'}
+2026-08-08 23:39:00 | DEBUG    | traitlets | msg_type: execute_input
+2026-08-08 23:39:00 | DEBUG    | traitlets | content: {'code': 'pass  # skipped; artefacts restored by resume_from_interpretation.py\n', 'execution_count': 4}
+2026-08-08 23:39:00 | DEBUG    | traitlets | msg_type: status
+2026-08-08 23:39:00 | DEBUG    | traitlets | content: {'execution_state': 'idle'}
+2026-08-08 23:39:00 | DEBUG    | traitlets | Skipping non-executing cell 8
+2026-08-08 23:39:00 | DEBUG    | traitlets | Executing cell:
+pass  # skipped; artefacts restored by resume_from_interpretation.py
+
+2026-08-08 23:39:00 | DEBUG    | traitlets | msg_type: status
+2026-08-08 23:39:00 | DEBUG    | traitlets | content: {'execution_state': 'busy'}
+2026-08-08 23:39:00 | DEBUG    | traitlets | msg_type: execute_input
+2026-08-08 23:39:00 | DEBUG    | traitlets | content: {'code': 'pass  # skipped; artefacts restored by resume_from_interpretation.py\n', 'execution_count': 5}
+2026-08-08 23:39:00 | DEBUG    | traitlets | msg_type: status
+2026-08-08 23:39:00 | DEBUG    | traitlets | content: {'execution_state': 'idle'}
+2026-08-08 23:39:00 | DEBUG    | traitlets | Skipping non-executing cell 10
+2026-08-08 23:39:00 | DEBUG    | traitlets | Executing cell:
+pass  # skipped; artefacts restored by resume_from_interpretation.py
+
+2026-08-08 23:39:00 | DEBUG    | traitlets | msg_type: status
+2026-08-08 23:39:00 | DEBUG    | traitlets | content: {'execution_state': 'busy'}
+2026-08-08 23:39:00 | DEBUG    | traitlets | msg_type: execute_input
+2026-08-08 23:39:00 | DEBUG    | traitlets | content: {'code': 'pass  # skipped; artefacts restored by resume_from_interpretation.py\n', 'execution_count': 6}
+2026-08-08 23:39:00 | DEBUG    | traitlets | msg_type: status
+2026-08-08 23:39:00 | DEBUG    | traitlets | content: {'execution_state': 'idle'}
+2026-08-08 23:39:00 | DEBUG    | traitlets | Skipping non-executing cell 12
+2026-08-08 23:39:00 | DEBUG    | traitlets | Executing cell:
+pass  # skipped; artefacts restored by resume_from_interpretation.py
+
+2026-08-08 23:39:00 | DEBUG    | traitlets | msg_type: status
+2026-08-08 23:39:00 | DEBUG    | traitlets | content: {'execution_state': 'busy'}
+2026-08-08 23:39:00 | DEBUG    | traitlets | msg_type: execute_input
+2026-08-08 23:39:00 | DEBUG    | traitlets | content: {'code': 'pass  # skipped; artefacts restored by resume_from_interpretation.py\n', 'execution_count': 7}
+2026-08-08 23:39:00 | DEBUG    | traitlets | msg_type: status
+2026-08-08 23:39:00 | DEBUG    | traitlets | content: {'execution_state': 'idle'}
+2026-08-08 23:39:00 | DEBUG    | traitlets | Skipping non-executing cell 14
+2026-08-08 23:39:00 | DEBUG    | traitlets | Executing cell:
+pass  # skipped; artefacts restored by resume_from_interpretation.py
+
+2026-08-08 23:39:00 | DEBUG    | traitlets | msg_type: status
+2026-08-08 23:39:00 | DEBUG    | traitlets | content: {'execution_state': 'busy'}
+2026-08-08 23:39:00 | DEBUG    | traitlets | msg_type: execute_input
+2026-08-08 23:39:00 | DEBUG    | traitlets | content: {'code': 'pass  # skipped; artefacts restored by resume_from_interpretation.py\n', 'execution_count': 8}
+2026-08-08 23:39:00 | DEBUG    | traitlets | msg_type: status
+2026-08-08 23:39:00 | DEBUG    | traitlets | content: {'execution_state': 'idle'}
+2026-08-08 23:39:00 | DEBUG    | traitlets | Skipping non-executing cell 16
+2026-08-08 23:39:00 | DEBUG    | traitlets | Executing cell:
+pass  # skipped; artefacts restored by resume_from_interpretation.py
+
+2026-08-08 23:39:00 | DEBUG    | traitlets | msg_type: status
+2026-08-08 23:39:00 | DEBUG    | traitlets | content: {'execution_state': 'busy'}
+2026-08-08 23:39:00 | DEBUG    | traitlets | msg_type: execute_input
+2026-08-08 23:39:00 | DEBUG    | traitlets | content: {'code': 'pass  # skipped; artefacts restored by resume_from_interpretation.py\n', 'execution_count': 9}
+2026-08-08 23:39:00 | DEBUG    | traitlets | msg_type: status
+2026-08-08 23:39:00 | DEBUG    | traitlets | content: {'execution_state': 'idle'}
+2026-08-08 23:39:00 | DEBUG    | traitlets | Skipping non-executing cell 18
+2026-08-08 23:39:00 | DEBUG    | traitlets | Executing cell:
+pass  # skipped; artefacts restored by resume_from_interpretation.py
+
+2026-08-08 23:39:00 | DEBUG    | traitlets | msg_type: status
+2026-08-08 23:39:00 | DEBUG    | traitlets | content: {'execution_state': 'busy'}
+2026-08-08 23:39:00 | DEBUG    | traitlets | msg_type: execute_input
+2026-08-08 23:39:00 | DEBUG    | traitlets | content: {'code': 'pass  # skipped; artefacts restored by resume_from_interpretation.py\n', 'execution_count': 10}
+2026-08-08 23:39:00 | DEBUG    | traitlets | msg_type: status
+2026-08-08 23:39:00 | DEBUG    | traitlets | content: {'execution_state': 'idle'}
+2026-08-08 23:39:00 | DEBUG    | traitlets | Skipping non-executing cell 20
+2026-08-08 23:39:00 | DEBUG    | traitlets | Executing cell:
+pass  # skipped; artefacts restored by resume_from_interpretation.py
+
+2026-08-08 23:39:00 | DEBUG    | traitlets | msg_type: status
+2026-08-08 23:39:00 | DEBUG    | traitlets | content: {'execution_state': 'busy'}
+2026-08-08 23:39:00 | DEBUG    | traitlets | msg_type: execute_input
+2026-08-08 23:39:00 | DEBUG    | traitlets | content: {'code': 'pass  # skipped; artefacts restored by resume_from_interpretation.py\n', 'execution_count': 11}
+2026-08-08 23:39:00 | DEBUG    | traitlets | msg_type: status
+2026-08-08 23:39:00 | DEBUG    | traitlets | content: {'execution_state': 'idle'}
+2026-08-08 23:39:00 | DEBUG    | traitlets | Skipping non-executing cell 22
+2026-08-08 23:39:00 | DEBUG    | traitlets | Executing cell:
+pass  # skipped; artefacts restored by resume_from_interpretation.py
+
+2026-08-08 23:39:00 | DEBUG    | traitlets | msg_type: status
+2026-08-08 23:39:00 | DEBUG    | traitlets | content: {'execution_state': 'busy'}
+2026-08-08 23:39:00 | DEBUG    | traitlets | msg_type: execute_input
+2026-08-08 23:39:00 | DEBUG    | traitlets | content: {'code': 'pass  # skipped; artefacts restored by resume_from_interpretation.py\n', 'execution_count': 12}
+2026-08-08 23:39:00 | DEBUG    | traitlets | msg_type: status
+2026-08-08 23:39:00 | DEBUG    | traitlets | content: {'execution_state': 'idle'}
+2026-08-08 23:39:00 | DEBUG    | traitlets | Skipping non-executing cell 24
+2026-08-08 23:39:00 | DEBUG    | traitlets | Executing cell:
+pass  # skipped; artefacts restored by resume_from_interpretation.py
+
+2026-08-08 23:39:00 | DEBUG    | traitlets | msg_type: status
+2026-08-08 23:39:00 | DEBUG    | traitlets | content: {'execution_state': 'busy'}
+2026-08-08 23:39:00 | DEBUG    | traitlets | msg_type: execute_input
+2026-08-08 23:39:00 | DEBUG    | traitlets | content: {'code': 'pass  # skipped; artefacts restored by resume_from_interpretation.py\n', 'execution_count': 13}
+2026-08-08 23:39:00 | DEBUG    | traitlets | msg_type: status
+2026-08-08 23:39:00 | DEBUG    | traitlets | content: {'execution_state': 'idle'}
+2026-08-08 23:39:00 | DEBUG    | traitlets | Skipping non-executing cell 26
+2026-08-08 23:39:00 | DEBUG    | traitlets | Executing cell:
+pass  # skipped; artefacts restored by resume_from_interpretation.py
+
+2026-08-08 23:39:00 | DEBUG    | traitlets | msg_type: status
+2026-08-08 23:39:00 | DEBUG    | traitlets | content: {'execution_state': 'busy'}
+2026-08-08 23:39:00 | DEBUG    | traitlets | msg_type: execute_input
+2026-08-08 23:39:00 | DEBUG    | traitlets | content: {'code': 'pass  # skipped; artefacts restored by resume_from_interpretation.py\n', 'execution_count': 14}
+2026-08-08 23:39:00 | DEBUG    | traitlets | msg_type: status
+2026-08-08 23:39:00 | DEBUG    | traitlets | content: {'execution_state': 'idle'}
+2026-08-08 23:39:00 | DEBUG    | traitlets | Skipping non-executing cell 28
+2026-08-08 23:39:00 | DEBUG    | traitlets | Executing cell:
+pass  # skipped; artefacts restored by resume_from_interpretation.py
+
+2026-08-08 23:39:00 | DEBUG    | traitlets | msg_type: status
+2026-08-08 23:39:00 | DEBUG    | traitlets | content: {'execution_state': 'busy'}
+2026-08-08 23:39:00 | DEBUG    | traitlets | msg_type: execute_input
+2026-08-08 23:39:00 | DEBUG    | traitlets | content: {'code': 'pass  # skipped; artefacts restored by resume_from_interpretation.py\n', 'execution_count': 15}
+2026-08-08 23:39:00 | DEBUG    | traitlets | msg_type: status
+2026-08-08 23:39:00 | DEBUG    | traitlets | content: {'execution_state': 'idle'}
+2026-08-08 23:39:00 | DEBUG    | traitlets | Skipping non-executing cell 30
+2026-08-08 23:39:00 | DEBUG    | traitlets | Executing cell:
+pass  # skipped; artefacts restored by resume_from_interpretation.py
+
+2026-08-08 23:39:00 | DEBUG    | traitlets | msg_type: status
+2026-08-08 23:39:00 | DEBUG    | traitlets | content: {'execution_state': 'busy'}
+2026-08-08 23:39:00 | DEBUG    | traitlets | msg_type: execute_input
+2026-08-08 23:39:00 | DEBUG    | traitlets | content: {'code': 'pass  # skipped; artefacts restored by resume_from_interpretation.py\n', 'execution_count': 16}
+2026-08-08 23:39:00 | DEBUG    | traitlets | msg_type: status
+2026-08-08 23:39:00 | DEBUG    | traitlets | content: {'execution_state': 'idle'}
+2026-08-08 23:39:00 | DEBUG    | traitlets | Skipping non-executing cell 32
+2026-08-08 23:39:00 | DEBUG    | traitlets | Executing cell:
+pass  # skipped; artefacts restored by resume_from_interpretation.py
+
+2026-08-08 23:39:00 | DEBUG    | traitlets | msg_type: status
+2026-08-08 23:39:00 | DEBUG    | traitlets | content: {'execution_state': 'busy'}
+2026-08-08 23:39:00 | DEBUG    | traitlets | msg_type: execute_input
+2026-08-08 23:39:00 | DEBUG    | traitlets | content: {'code': 'pass  # skipped; artefacts restored by resume_from_interpretation.py\n', 'execution_count': 17}
+2026-08-08 23:39:00 | DEBUG    | traitlets | msg_type: status
+2026-08-08 23:39:00 | DEBUG    | traitlets | content: {'execution_state': 'idle'}
+2026-08-08 23:39:00 | DEBUG    | traitlets | Executing cell:
+import json
+print(json.dumps({"dataset_id": 6, "processed_id": 8, "best_model_id": 35, "tuned_model_path": "/home/schrondinger/Desktop/Gabriel/app/ml/models/notebook_xgboost_tuned.joblib", "row_count": 200000, "metrics": {"accuracy": 0.918425, "precision": 0.9140801320984192, "recall": 0.918425, "f1_score": 0.9018181638203768, "roc_auc": 0.8594223591750862, "training_time_seconds": 0.0, "prediction_time_seconds": 0.09207342998706736, "test_samples": 40000}, "trained_at": "2026-08-08 23:38:50", "figures": ["/home/schrondinger/Desktop/Gabriel/notebooks/figures/eda_missing_values.html", "/home/schrondinger/Desktop/Gabriel/notebooks/figures/eda_correlation_heatmap.html", "/home/schrondinger/Desktop/Gabriel/notebooks/figures/eda_class_distribution.html", "/home/schrondinger/Desktop/Gabriel/notebooks/figures/eda_feature_distribution.html", "/home/schrondinger/Desktop/Gabriel/notebooks/figures/eda_histogram.html", "/home/schrondinger/Desktop/Gabriel/notebooks/figures/eda_boxplot.html", "/home/schrondinger/Desktop/Gabriel/notebooks/figures/eda_scatter_plot.html", "/home/schrondinger/Desktop/Gabriel/notebooks/figures/eda_target_rate_by_category.html", "/home/schrondinger/Desktop/Gabriel/notebooks/figures/eda_categorical_overview.html", "/home/schrondinger/Desktop/Gabriel/notebooks/figures/eda_numeric_summary.html", "/home/schrondinger/Desktop/Gabriel/notebooks/figures/comparison_roc_comparison.html", "/home/schrondinger/Desktop/Gabriel/notebooks/figures/comparison_pr_comparison.html", "/home/schrondinger/Desktop/Gabriel/notebooks/figures/comparison_roc_auc.html", "/home/schrondinger/Desktop/Gabriel/notebooks/figures/comparison_accuracy.html", "/home/schrondinger/Desktop/Gabriel/notebooks/figures/comparison_precision.html", "/home/schrondinger/Desktop/Gabriel/notebooks/figures/comparison_recall.html", "/home/schrondinger/Desktop/Gabriel/notebooks/figures/comparison_f1_score.html", "/home/schrondinger/Desktop/Gabriel/notebooks/figures/comparison_training_time.html", "/home/schrondinger/Desktop/Gabriel/notebooks/figures/comparison_prediction_time.html", "/home/schrondinger/Desktop/Gabriel/notebooks/figures/tuned_confusion_matrix.html", "/home/schrondinger/Desktop/Gabriel/notebooks/figures/tuned_normalized_confusion_matrix.html", "/home/schrondinger/Desktop/Gabriel/notebooks/figures/tuned_prediction_distribution.html", "/home/schrondinger/Desktop/Gabriel/notebooks/figures/tuned_feature_importance.html", "/home/schrondinger/Desktop/Gabriel/notebooks/figures/tuned_roc_curve.html", "/home/schrondinger/Desktop/Gabriel/notebooks/figures/tuned_precision_recall_curve.html", "/home/schrondinger/Desktop/Gabriel/notebooks/figures/tuned_calibration.html", "/home/schrondinger/Desktop/Gabriel/notebooks/figures/explain_summary.html", "/home/schrondinger/Desktop/Gabriel/notebooks/figures/explain_feature_importance.html", "/home/schrondinger/Desktop/Gabriel/notebooks/figures/explain_dependence.html"]}, indent=2))
+print('figures_dir', r'/home/schrondinger/Desktop/Gabriel/notebooks/figures')
+
+2026-08-08 23:39:00 | DEBUG    | traitlets | msg_type: status
+2026-08-08 23:39:00 | DEBUG    | traitlets | content: {'execution_state': 'busy'}
+2026-08-08 23:39:00 | DEBUG    | traitlets | msg_type: execute_input
+2026-08-08 23:39:00 | DEBUG    | traitlets | content: {'code': 'import json\nprint(json.dumps({"dataset_id": 6, "processed_id": 8, "best_model_id": 35, "tuned_model_path": "/home/schrondinger/Desktop/Gabriel/app/ml/models/notebook_xgboost_tuned.joblib", "row_count": 200000, "metrics": {"accuracy": 0.918425, "precision": 0.9140801320984192, "recall": 0.918425, "f1_score": 0.9018181638203768, "roc_auc": 0.8594223591750862, "training_time_seconds": 0.0, "prediction_time_seconds": 0.09207342998706736, "test_samples": 40000}, "trained_at": "2026-08-08 23:38:50", "figures": ["/home/schrondinger/Desktop/Gabriel/notebooks/figures/eda_missing_values.html", "/home/schrondinger/Desktop/Gabriel/notebooks/figures/eda_correlation_heatmap.html", "/home/schrondinger/Desktop/Gabriel/notebooks/figures/eda_class_distribution.html", "/home/schrondinger/Desktop/Gabriel/notebooks/figures/eda_feature_distribution.html", "/home/schrondinger/Desktop/Gabriel/notebooks/figures/eda_histogram.html", "/home/schrondinger/Desktop/Gabriel/notebooks/figures/eda_boxplot.html", "/home/schrondinger/Desktop/Gabriel/notebooks/figures/eda_scatter_plot.html", "/home/schrondinger/Desktop/Gabriel/notebooks/figures/eda_target_rate_by_category.html", "/home/schrondinger/Desktop/Gabriel/notebooks/figures/eda_categorical_overview.html", "/home/schrondinger/Desktop/Gabriel/notebooks/figures/eda_numeric_summary.html", "/home/schrondinger/Desktop/Gabriel/notebooks/figures/comparison_roc_comparison.html", "/home/schrondinger/Desktop/Gabriel/notebooks/figures/comparison_pr_comparison.html", "/home/schrondinger/Desktop/Gabriel/notebooks/figures/comparison_roc_auc.html", "/home/schrondinger/Desktop/Gabriel/notebooks/figures/comparison_accuracy.html", "/home/schrondinger/Desktop/Gabriel/notebooks/figures/comparison_precision.html", "/home/schrondinger/Desktop/Gabriel/notebooks/figures/comparison_recall.html", "/home/schrondinger/Desktop/Gabriel/notebooks/figures/comparison_f1_score.html", "/home/schrondinger/Desktop/Gabriel/notebooks/figures/comparison_training_time.html", "/home/schrondinger/Desktop/Gabriel/notebooks/figures/comparison_prediction_time.html", "/home/schrondinger/Desktop/Gabriel/notebooks/figures/tuned_confusion_matrix.html", "/home/schrondinger/Desktop/Gabriel/notebooks/figures/tuned_normalized_confusion_matrix.html", "/home/schrondinger/Desktop/Gabriel/notebooks/figures/tuned_prediction_distribution.html", "/home/schrondinger/Desktop/Gabriel/notebooks/figures/tuned_feature_importance.html", "/home/schrondinger/Desktop/Gabriel/notebooks/figures/tuned_roc_curve.html", "/home/schrondinger/Desktop/Gabriel/notebooks/figures/tuned_precision_recall_curve.html", "/home/schrondinger/Desktop/Gabriel/notebooks/figures/tuned_calibration.html", "/home/schrondinger/Desktop/Gabriel/notebooks/figures/explain_summary.html", "/home/schrondinger/Desktop/Gabriel/notebooks/figures/explain_feature_importance.html", "/home/schrondinger/Desktop/Gabriel/notebooks/figures/explain_dependence.html"]}, indent=2))\nprint(\'figures_dir\', r\'/home/schrondinger/Desktop/Gabriel/notebooks/figures\')\n', 'execution_count': 18}
+2026-08-08 23:39:00 | DEBUG    | traitlets | msg_type: stream
+2026-08-08 23:39:00 | DEBUG    | traitlets | content: {'name': 'stdout', 'text': '{\n  "dataset_id": 6,\n  "processed_id": 8,\n  "best_model_id": 35,\n  "tuned_model_path": "/home/schrondinger/Desktop/Gabriel/app/ml/models/notebook_xgboost_tuned.joblib",\n  "row_count": 200000,\n  "metrics": {\n    "accuracy": 0.918425,\n    "precision": 0.9140801320984192,\n    "recall": 0.918425,\n    "f1_score": 0.9018181638203768,\n    "roc_auc": 0.8594223591750862,\n    "training_time_seconds": 0.0,\n    "prediction_time_seconds": 0.09207342998706736,\n    "test_samples": 40000\n  },\n  "trained_at": "2026-08-08 23:38:50",\n  "figures": [\n    "/home/schrondinger/Desktop/Gabriel/notebooks/figures/eda_missing_values.html",\n    "/home/schrondinger/Desktop/Gabriel/notebooks/figures/eda_correlation_heatmap.html",\n    "/home/schrondinger/Desktop/Gabriel/notebooks/figures/eda_class_distribution.html",\n    "/home/schrondinger/Desktop/Gabriel/notebooks/figures/eda_feature_distribution.html",\n    "/home/schrondinger/Desktop/Gabriel/notebooks/figures/eda_histogram.html",\n    "/home/schrondinger/Desktop/Gabriel/notebooks/figures/eda_boxplot.html",\n    "/home/schrondinger/Desktop/Gabriel/notebooks/figures/eda_scatter_plot.html",\n    "/home/schrondinger/Desktop/Gabriel/notebooks/figures/eda_target_rate_by_category.html",\n    "/home/schrondinger/Desktop/Gabriel/notebooks/figures/eda_categorical_overview.html",\n    "/home/schrondinger/Desktop/Gabriel/notebooks/figures/eda_numeric_summary.html",\n    "/home/schrondinger/Desktop/Gabriel/notebooks/figures/comparison_roc_comparison.html",\n    "/home/schrondinger/Desktop/Gabriel/notebooks/figures/comparison_pr_comparison.html",\n    "/home/schrondinger/Desktop/Gabriel/notebooks/figures/comparison_roc_auc.html",\n    "/home/schrondinger/Desktop/Gabriel/notebooks/figures/comparison_accuracy.html",\n    "/home/schrondinger/Desktop/Gabriel/notebooks/figures/comparison_precision.html",\n    "/home/schrondinger/Desktop/Gabriel/notebooks/figures/comparison_recall.html",\n    "/home/schrondinger/Desktop/Gabriel/notebooks/figures/comparison_f1_score.html",\n    "/home/schrondinger/Desktop/Gabriel/notebooks/figures/comparison_training_time.html",\n    "/home/schrondinger/Desktop/Gabriel/notebooks/figures/comparison_prediction_time.html",\n    "/home/schrondinger/Desktop/Gabriel/notebooks/figures/tuned_confusion_matrix.html",\n    "/home/schrondinger/Desktop/Gabriel/notebooks/figures/tuned_normalized_confusion_matrix.html",\n    "/home/schrondinger/Desktop/Gabriel/notebooks/figures/tuned_prediction_distribution.html",\n    "/home/schrondinger/Desktop/Gabriel/notebooks/figures/tuned_feature_importance.html",\n    "/home/schrondinger/Desktop/Gabriel/notebooks/figures/tuned_roc_curve.html",\n    "/home/schrondinger/Desktop/Gabriel/notebooks/figures/tuned_precision_recall_curve.html",\n    "/home/schrondinger/Desktop/Gabriel/notebooks/figures/tuned_calibration.html",\n    "/home/schrondinger/Desktop/Gabriel/notebooks/figures/explain_summary.html",\n    "/home/schrondinger/Desktop/Gabriel/notebooks/figures/explain_feature_importance.html",\n    "/home/schrondinger/Desktop/Gabriel/notebooks/figures/explain_dependence.html"\n  ]\n}\nfigures_dir /home/schrondinger/Desktop/Gabriel/notebooks/figures\n'}
+2026-08-08 23:39:00 | DEBUG    | traitlets | msg_type: status
+2026-08-08 23:39:00 | DEBUG    | traitlets | content: {'execution_state': 'idle'}
+Wrote /home/schrondinger/Desktop/Gabriel/notebooks/hospital_readmission_ml_pipeline.executed.ipynb
+Saved 33 chart HTML files under /home/schrondinger/Desktop/Gabriel/notebooks/figures

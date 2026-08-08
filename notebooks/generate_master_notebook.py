@@ -591,6 +591,8 @@ def build_notebook() -> dict:
             with flask_app_context():
                 comparison = build_model_comparison(USER_ID)
                 BEST_MODEL_ID = comparison["best_model_id"]
+                if BEST_MODEL_ID is None and comparison["models"]:
+                    BEST_MODEL_ID = max(comparison["models"], key=lambda row: row.get("f1_score") or 0)["id"]
                 display(pd.DataFrame(comparison["models"]))
 
                 for name, figure in comparison["charts"].items():
@@ -619,24 +621,29 @@ def build_notebook() -> dict:
     cells.append(
         code(
             """
-            from app.explainability.explanation_service import build_full_explanations, list_explainable_models
+from app.explainability.explanation_service import build_full_explanations, list_explainable_models
+from app.explainability.shap_service import build_global_explanations
 
-            with flask_app_context():
-                explainable = list_explainable_models(USER_ID)
-                interpret_model_id = BEST_MODEL_ID or explainable[0]["id"]
-                explanation = build_full_explanations(USER_ID, interpret_model_id, patient_index=0)
-                for section_name, charts in explanation.get("charts", {}).items():
-                    if isinstance(charts, dict):
-                        for name, figure in charts.items():
-                            if figure:
-                                print(section_name, name)
-                                pio.show(figure, renderer="notebook_connected")
+with flask_app_context():
+    explainable = list_explainable_models(USER_ID)
+    interpret_model_id = BEST_MODEL_ID or (explainable[0].id if explainable else None)
+    if interpret_model_id is None:
+        raise RuntimeError("No explainable models available.")
+    try:
+        explanation = build_full_explanations(USER_ID, interpret_model_id, test_row_index=0)
+    except Exception as exc:
+        print(f"Full SHAP/LIME failed ({exc}); falling back to global SHAP only.")
+        explanation = build_global_explanations(USER_ID, interpret_model_id)
+    for name, figure in explanation.get("charts", {}).items():
+        if figure:
+            print("---", name, "---")
+            pio.show(figure, renderer="notebook_connected")
 
-            if TUNED_EVAL.get("charts", {}).get("feature_importance"):
-                print("--- tuned model feature importance ---")
-                pio.show(TUNED_EVAL["charts"]["feature_importance"], renderer="notebook_connected")
+if TUNED_EVAL.get("charts", {}).get("feature_importance"):
+    print("--- tuned model feature importance ---")
+    pio.show(TUNED_EVAL["charts"]["feature_importance"], renderer="notebook_connected")
 
-            PIPELINE["Model Interpretation"] = "complete"
+PIPELINE["Model Interpretation"] = "complete"
             """
         )
     )
