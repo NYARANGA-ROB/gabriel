@@ -1,0 +1,12 @@
+<nav class="admin-subnav mb-4">
+    <ul class="nav nav-pills flex-wrap gap-2">
+        {% for item in admin_nav %}
+        <li class="nav-item">
+            <a class="nav-link{% if item.is_active %} active{% endif %}"
+               href="{{ item.url }}">
+                <i class="bi bi-{{ item.icon }} me-1"></i>{{ item.label }}
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+</nav>

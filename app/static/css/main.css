@@ -1,0 +1,194 @@
+/* Public pages & shared components */
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--hc-surface);
+}
+
+main {
+    flex: 1;
+}
+
+/* Navbar */
+.app-navbar {
+    background: linear-gradient(135deg, #0a5cad 0%, #0066cc 55%, #0088dd 100%) !important;
+    padding-block: var(--space-3);
+    box-shadow: var(--shadow-md);
+}
+
+.app-navbar .navbar-brand {
+    font-weight: 700;
+    letter-spacing: var(--letter-spacing-tight);
+    font-size: var(--font-size-lg);
+}
+
+.app-navbar .nav-link {
+    font-weight: 500;
+    font-size: var(--font-size-sm);
+    padding: var(--space-2) var(--space-3) !important;
+    border-radius: var(--radius-sm);
+    transition: background-color var(--transition-fast);
+}
+
+.app-navbar .nav-link:hover,
+.app-navbar .nav-link:focus {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.app-navbar .btn-light {
+    font-weight: 600;
+    border-radius: var(--radius-pill);
+    color: var(--hc-primary);
+}
+
+/* Avatars */
+.avatar-circle,
+.profile-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.avatar-circle {
+    width: 2rem;
+    height: 2rem;
+    font-size: var(--font-size-xs);
+    background: rgba(255, 255, 255, 0.2);
+    color: var(--hc-white);
+}
+
+.profile-avatar {
+    width: 5rem;
+    height: 5rem;
+    font-size: 1.5rem;
+    background: linear-gradient(135deg, var(--hc-primary), var(--hc-accent));
+    color: var(--hc-white);
+    box-shadow: var(--shadow-md);
+}
+
+/* Auth */
+.auth-page {
+    min-height: calc(100vh - 14rem);
+    align-items: center;
+}
+
+.auth-card {
+    border-radius: var(--radius-xl) !important;
+    overflow: hidden;
+}
+
+.auth-icon {
+    width: 4rem;
+    height: 4rem;
+    margin-inline: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-lg);
+    background: var(--hc-primary-light);
+    color: var(--hc-primary);
+    font-size: 1.75rem;
+}
+
+/* Landing */
+.hero-section {
+    padding-top: var(--space-8);
+    animation: hc-fade-in 0.6s ease-out;
+}
+
+.hero-badge {
+    background: var(--hc-primary-light);
+    color: var(--hc-primary);
+    font-weight: 600;
+    font-size: var(--font-size-sm);
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-pill);
+}
+
+.feature-card {
+    border-radius: var(--radius-lg) !important;
+    transition: transform var(--transition-base), box-shadow var(--transition-base);
+    border: 1px solid var(--hc-border) !important;
+}
+
+.feature-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg) !important;
+}
+
+.feature-icon-wrap {
+    width: 3rem;
+    height: 3rem;
+    border-radius: var(--radius-md);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--hc-primary-light);
+    color: var(--hc-primary);
+    font-size: 1.35rem;
+    margin-bottom: var(--space-4);
+}
+
+.quick-link-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-md);
+    background: var(--hc-primary-light);
+    color: var(--hc-primary);
+    flex-shrink: 0;
+}
+
+.empty-state-icon {
+    font-size: 3rem;
+    color: var(--hc-primary);
+    opacity: 0.85;
+}
+
+/* Footer */
+.app-footer {
+    background: var(--hc-white);
+    border-top: 1px solid var(--hc-border);
+    margin-top: var(--space-8);
+    padding: var(--space-6) 0;
+}
+
+.app-footer p {
+    color: var(--hc-text-muted);
+    font-size: var(--font-size-sm);
+    margin: 0;
+}
+
+/* Error pages */
+.error-page {
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.error-code {
+    font-size: 5rem;
+    font-weight: 800;
+    color: var(--hc-primary);
+    line-height: 1;
+    letter-spacing: var(--letter-spacing-tight);
+}
+
+@media (max-width: 767.98px) {
+    .auth-card .card-body {
+        padding: var(--space-6) !important;
+    }
+
+    .hero-section h1 {
+        font-size: 1.75rem;
+    }
+}

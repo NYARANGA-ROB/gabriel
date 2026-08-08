@@ -1,0 +1,71 @@
+{% extends "dashboard_base.html" %}
+{% from "partials/_pagination.html" import render_pagination %}
+
+{% block title %}Admin Datasets | {{ config.APP_NAME }}{% endblock %}
+
+{% block page_title %}Dataset Management{% endblock %}
+{% block page_subtitle %}View and remove datasets across all users{% endblock %}
+
+{% block dashboard_content %}
+{% include "partials/_admin_nav.html" %}
+
+<div class="card app-card mb-4">
+    <div class="card-body px-4 py-4">
+        <form method="GET" class="row g-3 align-items-end">
+            <div class="col-md-8">
+                {{ form.search.label(class="form-label fw-semibold") }}
+                {{ form.search(class="form-control", placeholder="Filename...") }}
+            </div>
+            <div class="col-md-4 d-grid">
+                <button type="submit" class="btn btn-primary">Search datasets</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card app-card">
+    <div class="card-header bg-white border-0 pt-4 px-4">
+        <h2 class="h5 fw-bold mb-1">Datasets</h2>
+        <p class="text-muted small mb-0">{{ pagination.total }} dataset(s)</p>
+    </div>
+    <div class="card-body px-4 pb-4">
+        {% if datasets %}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle table-app mb-0">
+                <thead>
+                    <tr>
+                        <th>Filename</th>
+                        <th>Owner</th>
+                        <th>Rows</th>
+                        <th>Columns</th>
+                        <th>Uploaded</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for dataset in datasets %}
+                    <tr>
+                        <td class="fw-semibold">{{ dataset.original_filename }}</td>
+                        <td>{{ dataset.user.email }}</td>
+                        <td>{{ dataset.row_count }}</td>
+                        <td>{{ dataset.column_count }}</td>
+                        <td>{{ dataset.uploaded_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                        <td class="text-end">
+                            <form method="POST" action="{{ url_for('admin.datasets_delete', dataset_id=dataset.id) }}"
+                                  onsubmit="return confirm('Delete this dataset and all dependent processed data?');">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {{ render_pagination(pagination, 'admin.datasets', {'search': form.search.data or ''}) }}
+        {% else %}
+        <p class="text-muted mb-0">No datasets found.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,118 @@
+{% extends "dashboard_base.html" %}
+
+{% block title %}Train Model | ML{% endblock %}
+
+{% block page_title %}Train model{% endblock %}
+{% block page_subtitle %}
+{% if retraining_from %}
+Retraining from run #{{ retraining_from.id }} — {{ retraining_from.model_name }}
+{% else %}
+Configure a classifier and launch training
+{% endif %}
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="mb-3">
+    <a href="{{ url_for('ml.index') }}" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left me-1"></i>Back to models
+    </a>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="card app-card">
+            <div class="card-header bg-white border-0 pt-4 px-4">
+                <h2 class="h5 fw-bold mb-1">Training configuration</h2>
+                <p class="text-muted small mb-0">Select a processed dataset, model type, and hyperparameters.</p>
+            </div>
+            <div class="card-body px-4 pb-4">
+                <form method="POST" novalidate id="trainModelForm">
+                    {{ form.hidden_tag() }}
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form.processed_dataset_id.label(class="form-label fw-semibold") }}
+                            {{ form.processed_dataset_id(class="form-select") }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            {{ form.model_type.label(class="form-label fw-semibold") }}
+                            {{ form.model_type(class="form-select", id="modelTypeSelect") }}
+                        </div>
+                    </div>
+
+                    <div class="form-check mb-4">
+                        {{ form.use_smote_data(class="form-check-input") }}
+                        {{ form.use_smote_data.label(class="form-check-label") }}
+                    </div>
+
+                    <div id="params-logistic_regression" class="param-panel">
+                        <h3 class="h6 fw-bold">Logistic Regression parameters</h3>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">{{ form.lr_c.label(class="form-label") }}{{ form.lr_c(class="form-control") }}</div>
+                            <div class="col-md-6 mb-3">{{ form.lr_max_iter.label(class="form-label") }}{{ form.lr_max_iter(class="form-control") }}</div>
+                        </div>
+                    </div>
+
+                    <div id="params-decision_tree" class="param-panel d-none">
+                        <h3 class="h6 fw-bold">Decision Tree parameters</h3>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">{{ form.dt_max_depth.label(class="form-label") }}{{ form.dt_max_depth(class="form-control") }}</div>
+                            <div class="col-md-6 mb-3">{{ form.dt_min_samples_split.label(class="form-label") }}{{ form.dt_min_samples_split(class="form-control") }}</div>
+                        </div>
+                    </div>
+
+                    <div id="params-random_forest" class="param-panel d-none">
+                        <h3 class="h6 fw-bold">Random Forest parameters</h3>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">{{ form.rf_n_estimators.label(class="form-label") }}{{ form.rf_n_estimators(class="form-control") }}</div>
+                            <div class="col-md-6 mb-3">{{ form.rf_max_depth.label(class="form-label") }}{{ form.rf_max_depth(class="form-control") }}</div>
+                        </div>
+                    </div>
+
+                    <div id="params-xgboost" class="param-panel d-none">
+                        <h3 class="h6 fw-bold">XGBoost parameters</h3>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">{{ form.xgb_n_estimators.label(class="form-label") }}{{ form.xgb_n_estimators(class="form-control") }}</div>
+                            <div class="col-md-4 mb-3">{{ form.xgb_max_depth.label(class="form-label") }}{{ form.xgb_max_depth(class="form-control") }}</div>
+                            <div class="col-md-4 mb-3">{{ form.xgb_learning_rate.label(class="form-label") }}{{ form.xgb_learning_rate(class="form-control") }}</div>
+                        </div>
+                    </div>
+
+                    <div id="params-neural_network" class="param-panel d-none">
+                        <h3 class="h6 fw-bold">Neural network parameters</h3>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">{{ form.ann_hidden_layers.label(class="form-label") }}{{ form.ann_hidden_layers(class="form-control") }}</div>
+                            <div class="col-md-4 mb-3">{{ form.ann_max_iter.label(class="form-label") }}{{ form.ann_max_iter(class="form-control") }}</div>
+                            <div class="col-md-4 mb-3">{{ form.ann_learning_rate.label(class="form-label") }}{{ form.ann_learning_rate(class="form-control") }}</div>
+                        </div>
+                    </div>
+
+                    {{ form.submit(class="btn btn-primary px-4", id="trainModelButton") }}
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card app-card">
+            <div class="card-header bg-white border-0 pt-4 px-4">
+                <h2 class="h6 fw-bold mb-1">Supported models</h2>
+            </div>
+            <div class="card-body px-4 pb-4">
+                <ul class="list-unstyled small mb-0">
+                    {% for key, meta in model_registry.items() %}
+                    <li class="mb-3">
+                        <div class="fw-semibold">{{ meta.label }}</div>
+                        <div class="text-muted">{{ meta.description }}</div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/ml_train.js') }}"></script>
+{% endblock %}

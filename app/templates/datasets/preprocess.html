@@ -1,0 +1,104 @@
+{% extends "dashboard_base.html" %}
+{% from "partials/_form_macros.html" import render_field %}
+
+{% block title %}Preprocess {{ dataset.original_filename }} | Datasets{% endblock %}
+
+{% block page_title %}Preprocessing pipeline{% endblock %}
+{% block page_subtitle %}Configure transformations for {{ dataset.original_filename }}{% endblock %}
+
+{% block dashboard_content %}
+<div class="mb-3">
+    <a href="{{ url_for('datasets.detail', dataset_id=dataset.id) }}" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left me-1"></i>Back to dataset
+    </a>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="card app-card">
+            <div class="card-header bg-white border-0 pt-4 px-4">
+                <h2 class="h5 fw-bold mb-1">Pipeline configuration</h2>
+                <p class="text-muted small mb-0">
+                    Missing value handling, encoding, scaling, outlier detection, train/test split, and SMOTE.
+                </p>
+            </div>
+            <div class="card-body px-4 pb-4">
+                <form method="POST" novalidate>
+                    {{ form.hidden_tag() }}
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            {{ render_field(form.target_column) }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ render_field(form.missing_strategy) }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ render_field(form.categorical_encoding) }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ render_field(form.scaling_method) }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ render_field(form.outlier_method) }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ render_field(form.outlier_action) }}
+                        </div>
+                        <div class="col-md-4">
+                            {{ render_field(form.test_size) }}
+                        </div>
+                        <div class="col-md-4">
+                            {{ render_field(form.random_state) }}
+                        </div>
+                        <div class="col-md-4 d-flex align-items-end">
+                            <div class="form-check mb-3">
+                                {{ form.apply_smote(class="form-check-input") }}
+                                {{ form.apply_smote.label(class="form-check-label fw-semibold") }}
+                            </div>
+                        </div>
+                    </div>
+
+                    {{ form.submit(class="btn btn-primary px-4") }}
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card app-card mb-4">
+            <div class="card-header bg-white border-0 pt-4 px-4">
+                <h2 class="h6 fw-bold mb-1">Source dataset</h2>
+            </div>
+            <div class="card-body px-4 pb-4">
+                <dl class="small mb-0">
+                    <dt class="text-muted">Filename</dt>
+                    <dd>{{ dataset.original_filename }}</dd>
+                    <dt class="text-muted">Rows</dt>
+                    <dd>{{ "{:,}".format(dataset.row_count) }}</dd>
+                    <dt class="text-muted">Columns</dt>
+                    <dd>{{ dataset.column_count }}</dd>
+                    <dt class="text-muted">Missing values</dt>
+                    <dd>{{ "{:,}".format(dataset.missing_values) }}</dd>
+                </dl>
+            </div>
+        </div>
+
+        <div class="card app-card">
+            <div class="card-header bg-white border-0 pt-4 px-4">
+                <h2 class="h6 fw-bold mb-1">Pipeline steps</h2>
+            </div>
+            <div class="card-body px-4 pb-4">
+                <ol class="small text-muted mb-0 ps-3">
+                    <li class="mb-2">Handle missing values</li>
+                    <li class="mb-2">Detect and optionally remove outliers</li>
+                    <li class="mb-2">Encode categorical features</li>
+                    <li class="mb-2">Scale numeric features</li>
+                    <li class="mb-2">Split into train and test sets</li>
+                    <li>Optionally apply SMOTE to the training set</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

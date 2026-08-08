@@ -1,0 +1,188 @@
+{% extends "dashboard_base.html" %}
+
+{% block title %}EDA — {{ dataset.original_filename }} | Datasets{% endblock %}
+
+{% block page_title %}Exploratory Data Analysis{% endblock %}
+{% block page_subtitle %}{{ dataset.original_filename }} &mdash; interactive visual exploration{% endblock %}
+
+{% block dashboard_content %}
+<div class="page-toolbar">
+    <a href="{{ url_for('datasets.detail', dataset_id=dataset.id) }}" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left me-1"></i>Back to dataset
+    </a>
+    <a href="{{ url_for('datasets.preprocess', dataset_id=dataset.id) }}" class="btn btn-outline-primary btn-sm">
+        <i class="bi bi-sliders me-1"></i>Preprocess
+    </a>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-lg-4">
+        <div class="card app-card h-100">
+            <div class="card-header bg-white border-0 pt-4 px-4">
+                <h2 class="h5 fw-bold mb-1">Chart configuration</h2>
+                <p class="text-muted small mb-0">Choose columns to drive class, distribution, and scatter plots.</p>
+            </div>
+            <div class="card-body px-4 pb-4">
+                <form method="GET" action="{{ url_for('datasets.eda', dataset_id=dataset.id) }}">
+                    <div class="mb-3">
+                        {{ form.target_column.label(class="form-label fw-semibold") }}
+                        {{ form.target_column(class="form-select") }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.feature_column.label(class="form-label fw-semibold") }}
+                        {{ form.feature_column(class="form-select") }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.x_column.label(class="form-label fw-semibold") }}
+                        {{ form.x_column(class="form-select") }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.y_column.label(class="form-label fw-semibold") }}
+                        {{ form.y_column(class="form-select") }}
+                    </div>
+                    {{ form.submit(class="btn btn-primary w-100") }}
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        <div class="row g-3">
+            <div class="col-sm-6">
+                <div class="overview-stat card app-card h-100">
+                    <div class="card-body">
+                        <div class="overview-stat-label">Rows</div>
+                        <div class="overview-stat-value">{{ "{:,}".format(eda_meta.row_count) }}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="overview-stat card app-card h-100">
+                    <div class="card-body">
+                        <div class="overview-stat-label">Columns</div>
+                        <div class="overview-stat-value">{{ eda_meta.column_count }}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="overview-stat card app-card h-100">
+                    <div class="card-body">
+                        <div class="overview-stat-label">Numeric features</div>
+                        <div class="overview-stat-value">{{ eda_meta.columns.numeric|length }}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="overview-stat card app-card h-100">
+                    <div class="card-body">
+                        <div class="overview-stat-label">Categorical features</div>
+                        <div class="overview-stat-value">{{ eda_meta.columns.categorical|length }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="card app-card eda-chart-card h-100">
+            <div class="card-body p-3">
+                <div id="chart-missing-values" class="plotly-chart"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card app-card eda-chart-card h-100">
+            <div class="card-body p-3">
+                <div id="chart-class-distribution" class="plotly-chart"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12">
+        <div class="card app-card eda-chart-card">
+            <div class="card-body p-3">
+                <div id="chart-correlation-heatmap" class="plotly-chart"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card app-card eda-chart-card h-100">
+            <div class="card-header bg-white border-0 pt-4 px-4 pb-0">
+                <h2 class="h6 fw-bold mb-0">Feature distribution</h2>
+            </div>
+            <div class="card-body p-3">
+                <div id="chart-feature-distribution" class="plotly-chart"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card app-card eda-chart-card h-100">
+            <div class="card-header bg-white border-0 pt-4 px-4 pb-0">
+                <h2 class="h6 fw-bold mb-0">Histogram</h2>
+            </div>
+            <div class="card-body p-3">
+                <div id="chart-histogram" class="plotly-chart"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card app-card eda-chart-card h-100">
+            <div class="card-header bg-white border-0 pt-4 px-4 pb-0">
+                <h2 class="h6 fw-bold mb-0">Boxplot</h2>
+            </div>
+            <div class="card-body p-3">
+                <div id="chart-boxplot" class="plotly-chart"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card app-card eda-chart-card h-100">
+            <div class="card-header bg-white border-0 pt-4 px-4 pb-0">
+                <h2 class="h6 fw-bold mb-0">Scatter plot</h2>
+            </div>
+            <div class="card-body p-3">
+                <div id="chart-scatter-plot" class="plotly-chart"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card app-card eda-chart-card h-100">
+            <div class="card-header bg-white border-0 pt-4 px-4 pb-0">
+                <h2 class="h6 fw-bold mb-0">Readmission rate by category</h2>
+            </div>
+            <div class="card-body p-3">
+                <div id="chart-target-rate" class="plotly-chart"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card app-card eda-chart-card h-100">
+            <div class="card-header bg-white border-0 pt-4 px-4 pb-0">
+                <h2 class="h6 fw-bold mb-0">Categorical overview</h2>
+            </div>
+            <div class="card-body p-3">
+                <div id="chart-categorical-overview" class="plotly-chart"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card app-card eda-chart-card h-100">
+            <div class="card-header bg-white border-0 pt-4 px-4 pb-0">
+                <h2 class="h6 fw-bold mb-0">Numeric feature means</h2>
+            </div>
+            <div class="card-body p-3">
+                <div id="chart-numeric-summary" class="plotly-chart"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
+<script>
+    window.edaChartPayload = {{ charts|tojson }};
+</script>
+<script src="{{ url_for('static', filename='js/eda.js') }}"></script>
+{% endblock %}

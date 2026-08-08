@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Home | {{ config.APP_NAME }}{% endblock %}
+
+{% block content %}
+<section class="hero-section text-center py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
+            <span class="hero-badge d-inline-block mb-3">
+                <i class="bi bi-mortarboard me-1"></i>Master's Dissertation Project
+            </span>
+            <h1 class="display-5 fw-bold mb-3">
+                30-Day Hospital Readmission Risk Framework
+            </h1>
+            <p class="lead mb-4">
+                A comparative and explainable machine learning framework for predicting
+                and analysing hospital readmission risk using secondary healthcare data.
+            </p>
+            <div class="d-flex flex-column flex-sm-row justify-content-center gap-3">
+                <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg px-4">
+                    <i class="bi bi-arrow-right-circle me-2"></i>Get started
+                </a>
+                <a href="{{ url_for('auth.login') }}" class="btn btn-outline-primary btn-lg px-4">
+                    <i class="bi bi-box-arrow-in-right me-2"></i>Sign in
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="row g-4 py-4">
+    <div class="col-md-4 fade-in-up fade-in-up-delay-1">
+        <div class="card feature-card app-card h-100">
+            <div class="card-body p-4">
+                <div class="feature-icon-wrap">
+                    <i class="bi bi-bar-chart-line"></i>
+                </div>
+                <h2 class="h5 fw-bold">Comparative ML</h2>
+                <p class="text-muted mb-0">
+                    Evaluate multiple models to identify the most effective readmission predictors.
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 fade-in-up fade-in-up-delay-2">
+        <div class="card feature-card app-card h-100">
+            <div class="card-body p-4">
+                <div class="feature-icon-wrap">
+                    <i class="bi bi-lightbulb"></i>
+                </div>
+                <h2 class="h5 fw-bold">Explainability</h2>
+                <p class="text-muted mb-0">
+                    Interpret model outputs to support clinical understanding and transparency.
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 fade-in-up fade-in-up-delay-3">
+        <div class="card feature-card app-card h-100">
+            <div class="card-body p-4">
+                <div class="feature-icon-wrap">
+                    <i class="bi bi-database"></i>
+                </div>
+                <h2 class="h5 fw-bold">Secondary Data</h2>
+                <p class="text-muted mb-0">
+                    Built for structured healthcare datasets and reproducible analysis workflows.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

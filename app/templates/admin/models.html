@@ -1,0 +1,75 @@
+{% extends "dashboard_base.html" %}
+{% from "partials/_pagination.html" import render_pagination %}
+
+{% block title %}Admin Models | {{ config.APP_NAME }}{% endblock %}
+
+{% block page_title %}Model Management{% endblock %}
+{% block page_subtitle %}Review and remove trained models across all users{% endblock %}
+
+{% block dashboard_content %}
+{% include "partials/_admin_nav.html" %}
+
+<div class="card app-card mb-4">
+    <div class="card-body px-4 py-4">
+        <form method="GET" class="row g-3 align-items-end">
+            <div class="col-md-8">
+                {{ form.search.label(class="form-label fw-semibold") }}
+                {{ form.search(class="form-control", placeholder="Model name, type, or status...") }}
+            </div>
+            <div class="col-md-4 d-grid">
+                <button type="submit" class="btn btn-primary">Search models</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card app-card">
+    <div class="card-header bg-white border-0 pt-4 px-4">
+        <h2 class="h5 fw-bold mb-1">Trained models</h2>
+        <p class="text-muted small mb-0">{{ pagination.total }} model(s)</p>
+    </div>
+    <div class="card-body px-4 pb-4">
+        {% if models %}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle table-app mb-0">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                        <th>Owner</th>
+                        <th>Created</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for model in models %}
+                    <tr>
+                        <td class="fw-semibold">{{ model.model_name }}</td>
+                        <td>{{ model.model_type }}</td>
+                        <td>
+                            <span class="badge text-bg-{% if model.status == 'completed' %}success{% elif model.status == 'failed' %}danger{% else %}secondary{% endif %}">
+                                {{ model.status|title }}
+                            </span>
+                        </td>
+                        <td>{{ model.user.email }}</td>
+                        <td>{{ model.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                        <td class="text-end">
+                            <form method="POST" action="{{ url_for('admin.models_delete', model_id=model.id) }}"
+                                  onsubmit="return confirm('Delete this model and related prediction logs?');">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {{ render_pagination(pagination, 'admin.models', {'search': form.search.data or ''}) }}
+        {% else %}
+        <p class="text-muted mb-0">No models found.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

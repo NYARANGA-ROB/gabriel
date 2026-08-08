@@ -1,0 +1,95 @@
+{% extends "dashboard_base.html" %}
+{% from "partials/_pagination.html" import render_pagination %}
+
+{% block title %}Admin Prediction Logs | {{ config.APP_NAME }}{% endblock %}
+
+{% block page_title %}Prediction Logs{% endblock %}
+{% block page_subtitle %}Audit and manage prediction history across the platform{% endblock %}
+
+{% block dashboard_content %}
+{% include "partials/_admin_nav.html" %}
+
+<div class="card app-card mb-4">
+    <div class="card-body px-4 py-4">
+        <form method="GET" class="row g-3 align-items-end">
+            <div class="col-md-4">
+                {{ form.search.label(class="form-label fw-semibold") }}
+                {{ form.search(class="form-control", placeholder="Patient ID, model, prediction...") }}
+            </div>
+            <div class="col-md-3">
+                {{ form.model_id.label(class="form-label fw-semibold") }}
+                {{ form.model_id(class="form-select") }}
+            </div>
+            <div class="col-md-3">
+                {{ form.risk_level.label(class="form-label fw-semibold") }}
+                {{ form.risk_level(class="form-select") }}
+            </div>
+            <div class="col-md-2 d-grid">
+                <button type="submit" class="btn btn-primary">Apply</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card app-card">
+    <div class="card-header bg-white border-0 pt-4 px-4">
+        <h2 class="h5 fw-bold mb-1">Prediction records</h2>
+        <p class="text-muted small mb-0">{{ pagination.total }} record(s)</p>
+    </div>
+    <div class="card-body px-4 pb-4">
+        {% if records %}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle table-app mb-0">
+                <thead>
+                    <tr>
+                        <th>Patient ID</th>
+                        <th>Prediction</th>
+                        <th>Probability</th>
+                        <th>Risk</th>
+                        <th>Model</th>
+                        <th>User</th>
+                        <th>Date</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in records %}
+                    <tr>
+                        <td class="fw-semibold">{{ record.patient_id }}</td>
+                        <td>{{ record.prediction_label }}</td>
+                        <td>{{ (record.probability * 100)|round(1) }}%</td>
+                        <td>
+                            <span class="badge text-bg-{% if record.risk_level == 'High' %}danger{% elif record.risk_level == 'Moderate' %}warning{% else %}success{% endif %}">
+                                {{ record.risk_level }}
+                            </span>
+                        </td>
+                        <td>{{ record.model_name }}</td>
+                        <td>{{ record.user.email }}</td>
+                        <td>{{ record.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                        <td class="text-end">
+                            <form method="POST" action="{{ url_for('admin.predictions_delete', record_id=record.id) }}"
+                                  onsubmit="return confirm('Delete this prediction log?');">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {{ render_pagination(
+            pagination,
+            'admin.predictions',
+            {
+                'search': form.search.data or '',
+                'model_id': form.model_id.data or 0,
+                'risk_level': form.risk_level.data or ''
+            }
+        ) }}
+        {% else %}
+        <p class="text-muted mb-0">No prediction logs found.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

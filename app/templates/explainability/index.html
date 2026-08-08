@@ -1,0 +1,344 @@
+{% extends "dashboard_base.html" %}
+
+{% block title %}Explainability | {{ config.APP_NAME }}{% endblock %}
+
+{% block page_title %}Explainable AI{% endblock %}
+{% block page_subtitle %}SHAP and LIME explanations with side-by-side patient-level comparison{% endblock %}
+
+{% block dashboard_content %}
+<div class="page-toolbar">
+    <a href="{{ url_for('main.dashboard') }}" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left me-1"></i>Back to dashboard
+    </a>
+    {% if explanation %}
+    <a href="{{ url_for('explainability.pdf', model_id=explanation.model_id, dependence_feature=dependence_feature or '') }}"
+       class="btn btn-primary btn-sm">
+        <i class="bi bi-file-earmark-pdf me-1"></i>Download report
+    </a>
+    {% endif %}
+</div>
+
+{% if not models %}
+<div class="card app-card">
+    <div class="card-body text-center py-5">
+        <div class="empty-state-icon mb-3"><i class="bi bi-lightbulb"></i></div>
+        <h2 class="h5 fw-bold">No models available</h2>
+        <p class="text-muted mb-3">Train and evaluate a model before generating explanations.</p>
+        <a href="{{ url_for('ml.train') }}" class="btn btn-primary">Train model</a>
+    </div>
+</div>
+{% else %}
+
+<div class="row g-4">
+    <div class="col-xl-4">
+        <div class="card app-card">
+            <div class="card-header bg-white border-0 pt-4 px-4">
+                <h2 class="h5 fw-bold mb-1">Configuration</h2>
+                <p class="text-muted small mb-0">Select a model and patient, then generate SHAP and LIME explanations.</p>
+            </div>
+            <div class="card-body px-4 pb-4">
+                <form method="POST" novalidate>
+                    {{ form.hidden_tag() }}
+                    <input type="hidden" name="submit_explanations" value="1">
+
+                    <div class="mb-3">
+                        {{ form.trained_model_id.label(class="form-label fw-semibold") }}
+                        {{ form.trained_model_id(class="form-select", id="modelSelect") }}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.patient_id.label(class="form-label fw-semibold") }}
+                        {{ form.patient_id(class="form-control form-control-sm", placeholder="e.g. P-10042") }}
+                    </div>
+
+                    {% if feature_choices %}
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold" for="dependence_feature">Dependence feature</label>
+                        <select class="form-select" id="dependence_feature" name="dependence_feature">
+                            <option value="">Auto (most important)</option>
+                            {% for feature in feature_choices %}
+                            <option value="{{ feature }}" {% if dependence_feature == feature %}selected{% endif %}>{{ feature }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {% endif %}
+
+                    <hr class="my-4">
+                    <p class="small fw-semibold text-uppercase text-muted mb-2">Patient selection</p>
+                    <div class="btn-group w-100 mb-3" role="group">
+                        <input type="radio" class="btn-check" name="patient_source" id="patientSourceManual" value="manual"
+                               {% if patient_source != 'test' %}checked{% endif %}>
+                        <label class="btn btn-outline-secondary btn-sm" for="patientSourceManual">Manual entry</label>
+                        <input type="radio" class="btn-check" name="patient_source" id="patientSourceTest" value="test"
+                               {% if patient_source == 'test' %}checked{% endif %}>
+                        <label class="btn btn-outline-secondary btn-sm" for="patientSourceTest">Test set patient</label>
+                    </div>
+
+                    <div id="testPatientPanel" class="{% if patient_source != 'test' %}d-none{% endif %} mb-3">
+                        <label class="form-label fw-semibold" for="test_patient_index">Select patient</label>
+                        <select class="form-select" id="test_patient_index" name="test_patient_index">
+                            <option value="">Choose a test patient</option>
+                            {% for patient in test_patients %}
+                            <option value="{{ patient.index }}">{{ patient.label }} — {{ patient.preview }}</option>
+                            {% endfor %}
+                        </select>
+                        {% if not test_patients %}
+                        <p class="small text-muted mt-2 mb-0">Select a model to load patients from its test set.</p>
+                        {% endif %}
+                    </div>
+
+                    <div id="manualPatientPanel" class="{% if patient_source == 'test' %}d-none{% endif %}">
+                        <div class="row g-2">
+                            <div class="col-6">{{ form.age.label(class="form-label small") }}{{ form.age(class="form-control form-control-sm") }}</div>
+                            <div class="col-6">{{ form.gender.label(class="form-label small") }}{{ form.gender(class="form-select form-select-sm") }}</div>
+                            <div class="col-12">{{ form.primary_diagnosis.label(class="form-label small") }}{{ form.primary_diagnosis(class="form-control form-control-sm") }}</div>
+                            <div class="col-6">{{ form.race.label(class="form-label small") }}{{ form.race(class="form-select form-select-sm") }}</div>
+                            <div class="col-6">{{ form.admission_type.label(class="form-label small") }}{{ form.admission_type(class="form-select form-select-sm") }}</div>
+                            <div class="col-12">{{ form.discharge_disposition.label(class="form-label small") }}{{ form.discharge_disposition(class="form-select form-select-sm") }}</div>
+                            <div class="col-6">{{ form.length_of_stay.label(class="form-label small") }}{{ form.length_of_stay(class="form-control form-control-sm") }}</div>
+                            <div class="col-6">{{ form.time_in_hospital.label(class="form-label small") }}{{ form.time_in_hospital(class="form-control form-control-sm") }}</div>
+                            <div class="col-6">{{ form.number_of_procedures.label(class="form-label small") }}{{ form.number_of_procedures(class="form-control form-control-sm") }}</div>
+                            <div class="col-6">{{ form.number_of_medications.label(class="form-label small") }}{{ form.number_of_medications(class="form-control form-control-sm") }}</div>
+                            <div class="col-6">{{ form.diabetes_medication.label(class="form-label small") }}{{ form.diabetes_medication(class="form-select form-select-sm") }}</div>
+                            <div class="col-6">{{ form.insulin.label(class="form-label small") }}{{ form.insulin(class="form-select form-select-sm") }}</div>
+                            <div class="col-6">{{ form.a1c_result.label(class="form-label small") }}{{ form.a1c_result(class="form-select form-select-sm") }}</div>
+                            <div class="col-6">{{ form.max_glucose_serum.label(class="form-label small") }}{{ form.max_glucose_serum(class="form-select form-select-sm") }}</div>
+                        </div>
+                    </div>
+
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-warning">Generate explanations</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-8">
+        {% if not explanation %}
+        <div class="card app-card h-100">
+            <div class="card-body d-flex flex-column justify-content-center text-center p-5">
+                <div class="empty-state-icon mb-3"><i class="bi bi-diagram-3"></i></div>
+                <h2 class="h5 fw-bold">Awaiting analysis</h2>
+                <p class="text-muted mb-0">Select a model and patient to view SHAP global plots, LIME local explanations, and a side-by-side comparison.</p>
+            </div>
+        </div>
+        {% else %}
+
+        <div class="card app-card mb-4 explainability-summary-card">
+            <div class="card-body px-4 py-3 d-flex flex-wrap justify-content-between gap-2">
+                <div>
+                    <div class="fw-semibold">{{ explanation.model_label }}</div>
+                    <div class="small text-muted">{{ explanation.dataset_name }} · {{ explanation.sample_count }} background samples</div>
+                </div>
+                {% if explanation.has_local %}
+                <div class="text-md-end">
+                    <span class="badge text-bg-warning">{{ explanation.patient_label }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-12">
+                <div class="card app-card eda-chart-card">
+                    <div class="card-header bg-white border-0 pt-4 px-4">
+                        <h2 class="h6 fw-bold mb-0">SHAP Summary Plot</h2>
+                    </div>
+                    <div class="card-body p-3">
+                        <div id="explain-chart-summary" class="plotly-chart"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="card app-card eda-chart-card h-100">
+                    <div class="card-header bg-white border-0 pt-4 px-4">
+                        <h2 class="h6 fw-bold mb-0">SHAP Feature Importance</h2>
+                    </div>
+                    <div class="card-body p-3">
+                        <div id="explain-chart-feature-importance" class="plotly-chart"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="card app-card eda-chart-card h-100">
+                    <div class="card-header bg-white border-0 pt-4 px-4">
+                        <h2 class="h6 fw-bold mb-0">SHAP Dependence Plot</h2>
+                        <p class="text-muted small mb-0">{{ explanation.dependence_feature }}</p>
+                    </div>
+                    <div class="card-body p-3">
+                        <div id="explain-chart-dependence" class="plotly-chart"></div>
+                    </div>
+                </div>
+            </div>
+
+            {% if explanation.has_local and explanation.lime %}
+            <div class="col-12">
+                <div class="card app-card">
+                    <div class="card-header bg-white border-0 pt-4 px-4">
+                        <h2 class="h6 fw-bold mb-1">LIME local explanation</h2>
+                        <p class="text-muted small mb-0">Feature weights for {{ explanation.patient_label }}</p>
+                    </div>
+                    <div class="card-body px-4 pb-4">
+                        <div class="row g-3">
+                            <div class="col-lg-6">
+                                <div class="card h-100 border-success-subtle">
+                                    <div class="card-header bg-success-subtle border-0 py-3">
+                                        <h3 class="h6 fw-bold mb-0 text-success">Positive contributing factors</h3>
+                                    </div>
+                                    <div class="card-body">
+                                        {% if explanation.lime.positive_factors %}
+                                        <ul class="list-group list-group-flush">
+                                            {% for item in explanation.lime.positive_factors %}
+                                            <li class="list-group-item px-0 d-flex justify-content-between">
+                                                <span>{{ item.feature }}</span>
+                                                <span class="fw-semibold text-danger">{{ "%+.4f"|format(item.weight) }}</span>
+                                            </li>
+                                            {% endfor %}
+                                        </ul>
+                                        {% else %}
+                                        <p class="text-muted small mb-0">No positive LIME factors for this patient.</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="card h-100 border-danger-subtle">
+                                    <div class="card-header bg-danger-subtle border-0 py-3">
+                                        <h3 class="h6 fw-bold mb-0 text-danger">Negative contributing factors</h3>
+                                    </div>
+                                    <div class="card-body">
+                                        {% if explanation.lime.negative_factors %}
+                                        <ul class="list-group list-group-flush">
+                                            {% for item in explanation.lime.negative_factors %}
+                                            <li class="list-group-item px-0 d-flex justify-content-between">
+                                                <span>{{ item.feature }}</span>
+                                                <span class="fw-semibold text-success">{{ "%+.4f"|format(item.weight) }}</span>
+                                            </li>
+                                            {% endfor %}
+                                        </ul>
+                                        {% else %}
+                                        <p class="text-muted small mb-0">No negative LIME factors for this patient.</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="card app-card eda-chart-card h-100">
+                    <div class="card-header bg-white border-0 pt-4 px-4">
+                        <h2 class="h6 fw-bold mb-0">LIME Feature Weights</h2>
+                    </div>
+                    <div class="card-body p-3">
+                        <div id="explain-chart-lime-weights" class="plotly-chart"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="card app-card eda-chart-card h-100">
+                    <div class="card-header bg-white border-0 pt-4 px-4">
+                        <h2 class="h6 fw-bold mb-0">Interactive LIME Explanation</h2>
+                        <p class="text-muted small mb-0">Hover for feature values and risk direction</p>
+                    </div>
+                    <div class="card-body p-3">
+                        <div id="explain-chart-lime-interactive" class="plotly-chart"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="card app-card eda-chart-card h-100">
+                    <div class="card-header bg-white border-0 pt-4 px-4">
+                        <h2 class="h6 fw-bold mb-0">SHAP Waterfall</h2>
+                    </div>
+                    <div class="card-body p-3">
+                        <div id="explain-chart-local-waterfall" class="plotly-chart"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="card app-card eda-chart-card h-100">
+                    <div class="card-header bg-white border-0 pt-4 px-4">
+                        <h2 class="h6 fw-bold mb-0">SHAP Force Plot</h2>
+                    </div>
+                    <div class="card-body p-3">
+                        <div id="explain-chart-local-force" class="plotly-chart"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12">
+                <div class="card app-card eda-chart-card">
+                    <div class="card-header bg-white border-0 pt-4 px-4">
+                        <h2 class="h6 fw-bold mb-1">SHAP vs LIME Comparison</h2>
+                        <p class="text-muted small mb-0">Side-by-side contribution comparison for the selected patient</p>
+                    </div>
+                    <div class="card-body p-3">
+                        <div id="explain-chart-shap-lime-comparison" class="plotly-chart"></div>
+                    </div>
+                    {% if explanation.comparison and explanation.comparison.rows %}
+                    <div class="card-body px-4 pb-4 pt-0">
+                        <div class="table-responsive">
+                            <table class="table table-sm align-middle mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Feature</th>
+                                        <th>Value</th>
+                                        <th>SHAP</th>
+                                        <th>LIME</th>
+                                        <th>Agreement</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for row in explanation.comparison.rows %}
+                                    <tr>
+                                        <td>{{ row.feature }}</td>
+                                        <td>{{ row.value|round(3) }}</td>
+                                        <td class="{% if row.shap >= 0 %}text-danger{% else %}text-success{% endif %}">{{ "%+.4f"|format(row.shap) }}</td>
+                                        <td class="{% if row.lime >= 0 %}text-danger{% else %}text-success{% endif %}">{{ "%+.4f"|format(row.lime) }}</td>
+                                        <td>
+                                            <span class="badge text-bg-{% if row.agreement == 'aligned' %}success{% else %}warning{% endif %}">
+                                                {{ row.agreement|title }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+{% if explanation %}
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
+<script>
+    window.explainabilityCharts = {{ explanation.charts|tojson }};
+</script>
+<script src="{{ url_for('static', filename='js/explainability.js') }}"></script>
+{% endif %}
+<script>
+    document.getElementById("modelSelect")?.addEventListener("change", function () {
+        if (this.value && this.value !== "0") {
+            window.location.href = "{{ url_for('explainability.index') }}?model_id=" + this.value;
+        }
+    });
+</script>
+{% endblock %}

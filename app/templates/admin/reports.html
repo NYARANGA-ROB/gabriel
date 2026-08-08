@@ -1,0 +1,116 @@
+{% extends "dashboard_base.html" %}
+
+{% block title %}Admin Reports | {{ config.APP_NAME }}{% endblock %}
+
+{% block page_title %}Reports{% endblock %}
+{% block page_subtitle %}System-wide usage summaries and exportable administration reports{% endblock %}
+
+{% block dashboard_content %}
+{% include "partials/_admin_nav.html" %}
+
+<div class="page-toolbar">
+    <a href="{{ url_for('admin.reports_system_pdf') }}" class="btn btn-primary btn-sm">
+        <i class="bi bi-file-earmark-pdf me-1"></i>Download system report (PDF)
+    </a>
+    <a href="{{ url_for('ml.compare_pdf') }}" class="btn btn-outline-primary btn-sm">
+        <i class="bi bi-bar-chart-steps me-1"></i>Model comparison PDF
+    </a>
+    <a href="{{ url_for('analytics.index') }}" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-graph-up-arrow me-1"></i>Analytics dashboard
+    </a>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-lg-5">
+        <div class="card app-card h-100">
+            <div class="card-header bg-white border-0 pt-4 px-4">
+                <h2 class="h6 fw-bold mb-1">Platform summary</h2>
+            </div>
+            <div class="card-body px-4 pb-4">
+                <dl class="row mb-0">
+                    <dt class="col-sm-7">Registered users</dt>
+                    <dd class="col-sm-5">{{ stats.users.total }}</dd>
+                    <dt class="col-sm-7">Uploaded datasets</dt>
+                    <dd class="col-sm-5">{{ stats.datasets.uploaded }}</dd>
+                    <dt class="col-sm-7">Trained models</dt>
+                    <dd class="col-sm-5">{{ stats.models.total }}</dd>
+                    <dt class="col-sm-7">Prediction logs</dt>
+                    <dd class="col-sm-5">{{ stats.predictions.total }}</dd>
+                    <dt class="col-sm-7">High-risk predictions</dt>
+                    <dd class="col-sm-5">{{ stats.predictions.high_risk }}</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-7">
+        <div class="card app-card h-100">
+            <div class="card-header bg-white border-0 pt-4 px-4">
+                <h2 class="h6 fw-bold mb-1">Available exports</h2>
+                <p class="text-muted small mb-0">Reports accessible from the admin and analytics modules</p>
+            </div>
+            <div class="card-body px-4 pb-4">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item px-0 d-flex justify-content-between align-items-center">
+                        <span>System administration report</span>
+                        <a href="{{ url_for('admin.reports_system_pdf') }}" class="btn btn-sm btn-outline-primary">PDF</a>
+                    </li>
+                    <li class="list-group-item px-0 d-flex justify-content-between align-items-center">
+                        <span>Model comparison report</span>
+                        <a href="{{ url_for('ml.compare_pdf') }}" class="btn btn-sm btn-outline-primary">PDF</a>
+                    </li>
+                    <li class="list-group-item px-0 d-flex justify-content-between align-items-center">
+                        <span>Explainability report</span>
+                        <a href="{{ url_for('explainability.pdf') }}" class="btn btn-sm btn-outline-primary">PDF</a>
+                    </li>
+                    <li class="list-group-item px-0 d-flex justify-content-between align-items-center">
+                        <span>Personal prediction history</span>
+                        <a href="{{ url_for('predictions.history_export_pdf') }}" class="btn btn-sm btn-outline-secondary">PDF</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card app-card">
+    <div class="card-header bg-white border-0 pt-4 px-4">
+        <h2 class="h5 fw-bold mb-1">User activity</h2>
+        <p class="text-muted small mb-0">Per-user dataset, model, and prediction counts</p>
+    </div>
+    <div class="card-body px-4 pb-4">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle table-app mb-0">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Role</th>
+                        <th>Datasets</th>
+                        <th>Models</th>
+                        <th>Predictions</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in user_activity %}
+                    <tr>
+                        <td>
+                            <div class="fw-semibold">{{ row.full_name }}</div>
+                            <div class="text-muted small">{{ row.email }}</div>
+                        </td>
+                        <td>{{ row.role|title }}</td>
+                        <td>{{ row.dataset_count }}</td>
+                        <td>{{ row.model_count }}</td>
+                        <td>{{ row.prediction_count }}</td>
+                        <td>
+                            <span class="badge text-bg-{% if row.is_active %}success{% else %}secondary{% endif %}">
+                                {{ 'Active' if row.is_active else 'Inactive' }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

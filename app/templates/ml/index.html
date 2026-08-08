@@ -1,0 +1,124 @@
+{% extends "dashboard_base.html" %}
+
+{% block title %}ML Models | {{ config.APP_NAME }}{% endblock %}
+
+{% block page_title %}Machine Learning Models{% endblock %}
+{% block page_subtitle %}Train, monitor, and manage readmission risk classifiers{% endblock %}
+
+{% block dashboard_content %}
+<div class="page-toolbar">
+    <a href="{{ url_for('ml.train') }}" class="btn btn-primary">
+        <i class="bi bi-cpu me-2"></i>Train model
+    </a>
+    <a href="{{ url_for('ml.compare') }}" class="btn btn-outline-primary">
+        <i class="bi bi-bar-chart-steps me-2"></i>Compare models
+    </a>
+    <a href="{{ url_for('datasets.index') }}" class="btn btn-outline-secondary">
+        <i class="bi bi-database me-2"></i>Processed datasets
+    </a>
+</div>
+
+<div class="row g-4 mb-4">
+    {% for key, meta in model_registry.items() %}
+    <div class="col-md-6 col-xl-4">
+        <div class="card app-card h-100">
+            <div class="card-body p-4">
+                <h2 class="h6 fw-bold">{{ meta.label }}</h2>
+                <p class="text-muted small mb-0">{{ meta.description }}</p>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="card app-card">
+    <div class="card-header bg-white border-0 pt-4 px-4">
+        <h2 class="h5 fw-bold mb-1">Trained models</h2>
+        <p class="text-muted small mb-0">{{ trained_models|length }} training run(s)</p>
+    </div>
+    <div class="card-body px-4 pb-4">
+        {% if trained_models %}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Model</th>
+                        <th>Dataset</th>
+                        <th>Status</th>
+                        <th>F1 Score</th>
+                        <th>ROC AUC</th>
+                        <th>Trained</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for model in trained_models %}
+                    <tr>
+                        <td>
+                            <div class="fw-semibold">{{ model.model_name }}</div>
+                            <div class="text-muted small">Run #{{ model.id }}</div>
+                        </td>
+                        <td class="small">
+                            {{ model.processed_dataset.dataset.original_filename }}
+                        </td>
+                        <td>
+                            {% if model.status == 'completed' %}
+                            <span class="badge text-bg-success">Completed</span>
+                            {% elif model.status == 'failed' %}
+                            <span class="badge text-bg-danger">Failed</span>
+                            {% elif model.status == 'training' %}
+                            <span class="badge text-bg-primary">Training</span>
+                            {% else %}
+                            <span class="badge text-bg-secondary">{{ model.status|title }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% set eval = model.latest_evaluation %}
+                            {% if eval %}
+                            {{ (eval.accuracy * 100)|round(1) }}%
+                            {% elif model.metrics %}
+                            {{ (model.metrics.accuracy * 100)|round(1) }}%
+                            {% else %}
+                            —
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if eval %}
+                            {{ (eval.f1_score * 100)|round(1) }}%
+                            {% elif model.metrics %}
+                            {{ (model.metrics.f1_score * 100)|round(1) }}%
+                            {% else %}
+                            —
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if eval and eval.roc_auc is not none %}
+                            {{ eval.roc_auc|round(3) }}
+                            {% elif model.metrics and model.metrics.roc_auc is not none %}
+                            {{ model.metrics.roc_auc|round(3) }}
+                            {% else %}
+                            —
+                            {% endif %}
+                        </td>
+                        <td class="text-muted small">{{ model.created_at.strftime('%d %b %Y, %H:%M') }}</td>
+                        <td class="text-end">
+                            <a href="{{ url_for('ml.detail', model_id=model.id) }}" class="btn btn-sm btn-outline-primary">
+                                View
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <div class="empty-state-icon mb-3"><i class="bi bi-cpu"></i></div>
+            <h3 class="h6 fw-bold">No trained models yet</h3>
+            <p class="text-muted mb-3">Preprocess a dataset, then train your first classifier.</p>
+            <a href="{{ url_for('ml.train') }}" class="btn btn-primary">Train model</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

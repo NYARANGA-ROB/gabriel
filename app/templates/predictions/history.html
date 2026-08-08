@@ -1,0 +1,117 @@
+{% extends "dashboard_base.html" %}
+{% from "partials/_pagination.html" import render_pagination %}
+
+{% block title %}Prediction History | {{ config.APP_NAME }}{% endblock %}
+
+{% block page_title %}Prediction History{% endblock %}
+{% block page_subtitle %}Search, filter, and export previously generated readmission risk scores{% endblock %}
+
+{% block dashboard_content %}
+<div class="page-toolbar">
+    <a href="{{ url_for('predictions.index') }}" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left me-1"></i>New prediction
+    </a>
+    <a href="{{ url_for('predictions.history_export_csv', **export_query) }}"
+       class="btn btn-outline-primary btn-sm">
+        <i class="bi bi-filetype-csv me-1"></i>Export CSV
+    </a>
+    <a href="{{ url_for('predictions.history_export_pdf', **export_query) }}"
+       class="btn btn-primary btn-sm">
+        <i class="bi bi-file-earmark-pdf me-1"></i>Export PDF
+    </a>
+</div>
+
+<div class="card app-card mb-4">
+    <div class="card-header bg-white border-0 pt-4 px-4">
+        <h2 class="h5 fw-bold mb-1">Search &amp; filter</h2>
+        <p class="text-muted small mb-0">Filter by patient ID, model name, prediction label, model, or risk level.</p>
+    </div>
+    <div class="card-body px-4 pb-4">
+        <form method="GET" class="row g-3 align-items-end">
+            <div class="col-md-4">
+                {{ form.search.label(class="form-label fw-semibold") }}
+                {{ form.search(class="form-control", placeholder="Patient ID, model, prediction...") }}
+            </div>
+            <div class="col-md-3">
+                {{ form.model_id.label(class="form-label fw-semibold") }}
+                {{ form.model_id(class="form-select") }}
+            </div>
+            <div class="col-md-3">
+                {{ form.risk_level.label(class="form-label fw-semibold") }}
+                {{ form.risk_level(class="form-select") }}
+            </div>
+            <div class="col-md-2 d-grid">
+                <button type="submit" class="btn btn-primary">Apply</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card app-card">
+    <div class="card-header bg-white border-0 pt-4 px-4 d-flex flex-wrap justify-content-between gap-2">
+        <div>
+            <h2 class="h5 fw-bold mb-1">Prediction records</h2>
+            <p class="text-muted small mb-0">{{ pagination.total }} record(s) found</p>
+        </div>
+    </div>
+    <div class="card-body px-4 pb-4">
+        {% if records %}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle table-app mb-0">
+                <thead>
+                    <tr>
+                        <th>Patient ID</th>
+                        <th>Prediction</th>
+                        <th>Probability</th>
+                        <th>Risk</th>
+                        <th>Model</th>
+                        <th>Date</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in records %}
+                    <tr>
+                        <td class="fw-semibold">{{ record.patient_id }}</td>
+                        <td>{{ record.prediction_label }}</td>
+                        <td>{{ (record.probability * 100)|round(1) }}%</td>
+                        <td>
+                            <span class="badge text-bg-{% if record.risk_level == 'High' %}danger{% elif record.risk_level == 'Moderate' %}warning{% else %}success{% endif %}">
+                                {{ record.risk_level }}
+                            </span>
+                        </td>
+                        <td class="small">{{ record.model_name }}</td>
+                        <td class="small text-muted">{{ record.created_at.strftime('%d %b %Y, %H:%M') }}</td>
+                        <td class="text-end">
+                            <form method="POST"
+                                  action="{{ url_for('predictions.history_delete', record_id=record.id, page=pagination.page, search=filters.search or '', model_id=filters.model_id or '', risk_level=filters.risk_level or '') }}"
+                                  class="d-inline"
+                                  onsubmit="return confirm('Delete this prediction record?');">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn btn-outline-danger btn-sm">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {{ render_pagination(pagination, 'predictions.history', {
+            'search': filters.search or '',
+            'model_id': filters.model_id or '',
+            'risk_level': filters.risk_level or '',
+        }) }}
+        {% else %}
+        <div class="text-center py-5">
+            <div class="empty-state-icon mb-3"><i class="bi bi-clock-history"></i></div>
+            <h2 class="h5 fw-bold">No prediction records</h2>
+            <p class="text-muted mb-3">Generate a patient prediction to start building your audit trail.</p>
+            <a href="{{ url_for('predictions.index') }}" class="btn btn-primary btn-sm">Create prediction</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

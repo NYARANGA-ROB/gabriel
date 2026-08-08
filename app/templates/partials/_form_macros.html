@@ -1,0 +1,21 @@
+{% macro render_field(field, icon=None) %}
+<div class="mb-3">
+    {{ field.label(class="form-label fw-semibold") }}
+    <div class="{% if icon %}input-group{% endif %}">
+        {% if icon %}
+        <span class="input-group-text">
+            <i class="bi bi-{{ icon }}"></i>
+        </span>
+        {% endif %}
+        {{ field(class="form-control" + (" is-invalid" if field.errors else "")) }}
+    </div>
+    {% if field.errors %}
+        {% for error in field.errors %}
+        <div class="invalid-feedback d-block">{{ error }}</div>
+        {% endfor %}
+    {% endif %}
+    {% if field.description %}
+    <div class="form-text">{{ field.description }}</div>
+    {% endif %}
+</div>
+{% endmacro %}

@@ -1,0 +1,31 @@
+{% macro module_card(module) %}
+<div class="col-sm-6 col-xl-4">
+    {% if module.disabled %}
+    <div class="module-card card h-100 module-card-disabled">
+        <div class="card-body p-4">
+            <div class="module-card-icon text-{{ module.color }}">
+                <i class="bi bi-{{ module.icon }}"></i>
+            </div>
+            <div class="d-flex align-items-start justify-content-between gap-2 mb-2">
+                <h2 class="h5 card-title fw-bold mb-0 text-dark">{{ module.title }}</h2>
+                <span class="badge text-bg-light border">Coming soon</span>
+            </div>
+            <p class="card-text text-muted mb-0">{{ module.description }}</p>
+        </div>
+    </div>
+    {% else %}
+    <a href="{{ module.url }}" class="module-card card h-100 text-decoration-none">
+        <div class="card-body p-4">
+            <div class="module-card-icon text-{{ module.color }}">
+                <i class="bi bi-{{ module.icon }}"></i>
+            </div>
+            <div class="d-flex align-items-start justify-content-between gap-2 mb-2">
+                <h2 class="h5 card-title fw-bold mb-0 text-dark">{{ module.title }}</h2>
+                <i class="bi bi-arrow-up-right module-card-arrow text-muted"></i>
+            </div>
+            <p class="card-text text-muted mb-0">{{ module.description }}</p>
+        </div>
+    </a>
+    {% endif %}
+</div>
+{% endmacro %}

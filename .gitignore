@@ -1,0 +1,38 @@
+# Environment
+.env
+.venv/
+venv/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
+
+# Flask / SQLite
+instance/
+*.db
+*.sqlite3
+uploads/*
+!uploads/.gitkeep
+uploads/processed/*
+!uploads/processed/.gitkeep
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# ML artifacts
+app/ml/models/*.joblib
+app/ml/models/*.pkl
+data/diabetes_readmission_1m.csv
+data/diabetes_readmission_1m.csv

@@ -1,0 +1,53 @@
+{% macro render_pagination(pagination, endpoint, url_kwargs=None) %}
+{% set extra = url_kwargs or {} %}
+{% if pagination.total_pages > 1 %}
+<nav aria-label="Dataset preview pagination" class="mt-3">
+    <ul class="pagination justify-content-center mb-0">
+        <li class="page-item{% if not pagination.has_prev %} disabled{% endif %}">
+            <a class="page-link"
+               href="{{ url_for(endpoint, page=pagination.page - 1, **extra) if pagination.has_prev else '#' }}"
+               aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+
+        {% set start_page = [1, pagination.page - 2]|max %}
+        {% set end_page = [pagination.total_pages, pagination.page + 2]|min %}
+
+        {% if start_page > 1 %}
+        <li class="page-item">
+            <a class="page-link" href="{{ url_for(endpoint, page=1, **extra) }}">1</a>
+        </li>
+        {% if start_page > 2 %}
+        <li class="page-item disabled"><span class="page-link">…</span></li>
+        {% endif %}
+        {% endif %}
+
+        {% for page_num in range(start_page, end_page + 1) %}
+        <li class="page-item{% if page_num == pagination.page %} active{% endif %}">
+            <a class="page-link" href="{{ url_for(endpoint, page=page_num, **extra) }}">{{ page_num }}</a>
+        </li>
+        {% endfor %}
+
+        {% if end_page < pagination.total_pages %}
+        {% if end_page < pagination.total_pages - 1 %}
+        <li class="page-item disabled"><span class="page-link">…</span></li>
+        {% endif %}
+        <li class="page-item">
+            <a class="page-link" href="{{ url_for(endpoint, page=pagination.total_pages, **extra) }}">
+                {{ pagination.total_pages }}
+            </a>
+        </li>
+        {% endif %}
+
+        <li class="page-item{% if not pagination.has_next %} disabled{% endif %}">
+            <a class="page-link"
+               href="{{ url_for(endpoint, page=pagination.page + 1, **extra) if pagination.has_next else '#' }}"
+               aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+    </ul>
+</nav>
+{% endif %}
+{% endmacro %}

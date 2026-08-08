@@ -1,0 +1,77 @@
+{% extends "dashboard_base.html" %}
+{% from "partials/_module_card.html" import module_card %}
+
+{% block title %}Dashboard | {{ config.APP_NAME }}{% endblock %}
+
+{% block page_title %}Welcome back, {{ current_user.first_name }}{% endblock %}
+{% block page_subtitle %}Select a module to manage datasets, models, predictions, and analytics{% endblock %}
+
+{% block dashboard_content %}
+<section class="dashboard-overview mb-4 fade-in-up">
+    <div class="row g-3">
+        <div class="col-md-4">
+            <div class="overview-stat card app-card h-100">
+                <div class="card-body d-flex align-items-center gap-3 p-4">
+                    <div class="overview-stat-icon text-primary">
+                        <i class="bi bi-database"></i>
+                    </div>
+                    <div>
+                        <div class="overview-stat-label">Datasets</div>
+                        <div class="overview-stat-value">{{ current_user.datasets.count() }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="overview-stat card app-card h-100">
+                <div class="card-body d-flex align-items-center gap-3 p-4">
+                    <div class="overview-stat-icon text-success">
+                        <i class="bi bi-cpu"></i>
+                    </div>
+                    <div>
+                        <div class="overview-stat-label">Active models</div>
+                        <div class="overview-stat-value">
+                            {{ current_user.trained_models.filter_by(status='completed').count() }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="overview-stat card app-card h-100">
+                <div class="card-body d-flex align-items-center gap-3 p-4">
+                    <div class="overview-stat-icon text-danger">
+                        <i class="bi bi-heart-pulse"></i>
+                    </div>
+                    <div>
+                        <div class="overview-stat-label">Predictions</div>
+                        <div class="overview-stat-value">{{ current_user.prediction_records.count() }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="dashboard-modules fade-in-up fade-in-up-delay-1">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <div>
+            <h2 class="section-title">Framework modules</h2>
+            <p class="section-subtitle">
+                Access tools for dataset preparation, modelling, prediction, and explainability.
+            </p>
+        </div>
+        <a href="{{ url_for('predictions.index') }}" class="btn btn-primary">
+            <i class="bi bi-plus-lg me-2"></i>New prediction
+        </a>
+    </div>
+
+    <div class="row g-4">
+        {% for module in modules %}
+        {% if not module.admin_only or current_user.is_admin %}
+        {{ module_card(module) }}
+        {% endif %}
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

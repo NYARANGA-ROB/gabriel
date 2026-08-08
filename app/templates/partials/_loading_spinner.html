@@ -1,0 +1,5 @@
+{% macro render_spinner(size='') %}
+<span class="hc-spinner{% if size %} hc-spinner-{{ size }}{% endif %}" role="status">
+    <span class="visually-hidden">Loading...</span>
+</span>
+{% endmacro %}

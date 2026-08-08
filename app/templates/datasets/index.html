@@ -1,0 +1,103 @@
+{% extends "dashboard_base.html" %}
+
+{% block title %}Datasets | {{ config.APP_NAME }}{% endblock %}
+
+{% block page_title %}Dataset Management{% endblock %}
+{% block page_subtitle %}Upload and analyse secondary healthcare CSV datasets{% endblock %}
+
+{% block dashboard_content %}
+<div class="row g-4">
+    <div class="col-lg-4">
+        <div class="card app-card h-100">
+            <div class="card-header bg-white border-0 pt-4 px-4">
+                <h2 class="h5 fw-bold mb-1">
+                    <i class="bi bi-cloud-upload me-2 text-primary"></i>Upload dataset
+                </h2>
+                <p class="text-muted small mb-0">CSV files up to 32 MB</p>
+            </div>
+            <div class="card-body px-4 pb-4">
+                <form method="POST"
+                      action="{{ url_for('datasets.upload') }}"
+                      enctype="multipart/form-data"
+                      novalidate>
+                    {{ form.hidden_tag() }}
+
+                    <div class="mb-3">
+                        {{ form.dataset_file.label(class="form-label fw-semibold") }}
+                        {{ form.dataset_file(class="form-control" + (" is-invalid" if form.dataset_file.errors else ""), accept=".csv") }}
+                        {% if form.dataset_file.errors %}
+                            {% for error in form.dataset_file.errors %}
+                            <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        {% endif %}
+                        <div class="form-text">
+                            Upload structured patient or encounter data in CSV format.
+                        </div>
+                    </div>
+
+                    {{ form.submit(class="btn btn-primary w-100") }}
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        <div class="card app-card h-100">
+            <div class="card-header bg-white border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="h5 fw-bold mb-1">Your datasets</h2>
+                    <p class="text-muted small mb-0">{{ datasets|length }} uploaded file(s)</p>
+                </div>
+            </div>
+            <div class="card-body px-4 pb-4">
+                {% if datasets %}
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle dataset-table mb-0">
+                        <thead>
+                            <tr>
+                                <th>Filename</th>
+                                <th>Rows</th>
+                                <th>Columns</th>
+                                <th>Uploaded</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for dataset in datasets %}
+                            <tr>
+                                <td>
+                                    <div class="fw-semibold">{{ dataset.original_filename }}</div>
+                                    <div class="text-muted small">{{ (dataset.file_size / 1024)|round(1) }} KB</div>
+                                </td>
+                                <td>{{ "{:,}".format(dataset.row_count) }}</td>
+                                <td>{{ dataset.column_count }}</td>
+                                <td class="text-muted small">
+                                    {{ dataset.uploaded_at.strftime('%d %b %Y, %H:%M') }}
+                                </td>
+                                <td class="text-end">
+                                    <a href="{{ url_for('datasets.detail', dataset_id=dataset.id) }}"
+                                       class="btn btn-sm btn-outline-primary">
+                                        View
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <div class="empty-state-icon mb-3">
+                        <i class="bi bi-database"></i>
+                    </div>
+                    <h3 class="h6 fw-bold">No datasets uploaded yet</h3>
+                    <p class="text-muted mb-0">
+                        Upload a CSV file to begin exploratory analysis and modelling.
+                    </p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,321 @@
+{% extends "dashboard_base.html" %}
+
+{% block title %}Preprocessing report | {{ dataset.original_filename }}{% endblock %}
+
+{% block page_title %}Preprocessing report{% endblock %}
+{% block page_subtitle %}{{ dataset.original_filename }} &mdash; run #{{ processed.id }}{% endblock %}
+
+{% block dashboard_content %}
+<div class="page-toolbar">
+    <a href="{{ url_for('datasets.detail', dataset_id=dataset.id) }}" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left me-1"></i>Back to dataset
+    </a>
+    <a href="{{ url_for('datasets.preprocess', dataset_id=dataset.id) }}" class="btn btn-outline-primary btn-sm">
+        <i class="bi bi-sliders me-1"></i>New preprocessing run
+    </a>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-xl-3">
+        <div class="overview-stat card app-card h-100">
+            <div class="card-body">
+                <div class="overview-stat-label">Processed rows</div>
+                <div class="overview-stat-value">{{ "{:,}".format(processed.row_count_processed) }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="overview-stat card app-card h-100">
+            <div class="card-body">
+                <div class="overview-stat-label">Features</div>
+                <div class="overview-stat-value">{{ processed.feature_count }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="overview-stat card app-card h-100">
+            <div class="card-body">
+                <div class="overview-stat-label">Train / Test</div>
+                <div class="overview-stat-value fs-5">
+                    {{ processed.train_rows }} / {{ processed.test_rows }}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="overview-stat card app-card h-100">
+            <div class="card-body">
+                <div class="overview-stat-label">SMOTE train rows</div>
+                <div class="overview-stat-value">
+                    {% if processed.train_smote_rows %}
+                    {{ processed.train_smote_rows }}
+                    {% else %}
+                    —
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-lg-6">
+        <div class="card app-card h-100">
+            <div class="card-header bg-white border-0 pt-4 px-4">
+                <h2 class="h5 fw-bold mb-1">
+                    <i class="bi bi-download me-2 text-primary"></i>Download processed data
+                </h2>
+            </div>
+            <div class="card-body px-4 pb-4 d-grid gap-2">
+                <a class="btn btn-primary"
+                   href="{{ url_for('datasets.download_processed', dataset_id=dataset.id, processed_id=processed.id, file='processed') }}">
+                    <i class="bi bi-file-earmark-spreadsheet me-2"></i>Processed dataset (CSV)
+                </a>
+                <a class="btn btn-outline-primary"
+                   href="{{ url_for('datasets.download_processed', dataset_id=dataset.id, processed_id=processed.id, file='train') }}">
+                    Training set (CSV)
+                </a>
+                <a class="btn btn-outline-primary"
+                   href="{{ url_for('datasets.download_processed', dataset_id=dataset.id, processed_id=processed.id, file='test') }}">
+                    Test set (CSV)
+                </a>
+                {% if processed.train_smote_file_path %}
+                <a class="btn btn-outline-success"
+                   href="{{ url_for('datasets.download_processed', dataset_id=dataset.id, processed_id=processed.id, file='train_smote') }}">
+                    SMOTE training set (CSV)
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card app-card h-100">
+            <div class="card-header bg-white border-0 pt-4 px-4">
+                <h2 class="h5 fw-bold mb-1">Configuration</h2>
+            </div>
+            <div class="card-body px-4 pb-4">
+                <dl class="row small mb-0">
+                    <dt class="col-sm-5 text-muted">Target column</dt>
+                    <dd class="col-sm-7">{{ processed.target_column }}</dd>
+                    <dt class="col-sm-5 text-muted">Missing values</dt>
+                    <dd class="col-sm-7">{{ processed.config.missing_strategy|replace('_', ' ')|title }}</dd>
+                    <dt class="col-sm-5 text-muted">Encoding</dt>
+                    <dd class="col-sm-7">{{ processed.config.categorical_encoding|replace('_', ' ')|title }}</dd>
+                    <dt class="col-sm-5 text-muted">Scaling</dt>
+                    <dd class="col-sm-7">{{ processed.config.scaling_method|title }}</dd>
+                    <dt class="col-sm-5 text-muted">Outliers</dt>
+                    <dd class="col-sm-7">{{ processed.config.outlier_method|upper }} ({{ processed.config.outlier_action|replace('_', ' ') }})</dd>
+                    <dt class="col-sm-5 text-muted">Test size</dt>
+                    <dd class="col-sm-7">{{ (processed.config.test_size * 100)|round(0) }}%</dd>
+                    <dt class="col-sm-5 text-muted">SMOTE</dt>
+                    <dd class="col-sm-7">{{ "Enabled" if processed.config.apply_smote else "Disabled" }}</dd>
+                    <dt class="col-sm-5 text-muted">Created</dt>
+                    <dd class="col-sm-7">{{ processed.created_at.strftime('%d %b %Y, %H:%M') }}</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="card app-card h-100">
+            <div class="card-header bg-white border-0 pt-4 px-4">
+                <h2 class="h5 fw-bold mb-1">Missing value handling</h2>
+            </div>
+            <div class="card-body px-4 pb-4">
+                <p class="small text-muted">
+                    Strategy: <strong>{{ report.missing_value_handling.strategy|replace('_', ' ')|title }}</strong>
+                </p>
+                {% if report.missing_value_handling.rows_dropped %}
+                <p class="small mb-3">Rows dropped: <strong>{{ report.missing_value_handling.rows_dropped }}</strong></p>
+                {% endif %}
+                {% if report.missing_value_handling.columns_dropped %}
+                <p class="small mb-3">Columns dropped: {{ report.missing_value_handling.columns_dropped|join(', ') }}</p>
+                {% endif %}
+                {% if report.missing_value_handling.columns_affected %}
+                <div class="table-responsive">
+                    <table class="table table-sm mb-0">
+                        <thead>
+                            <tr>
+                                <th>Column</th>
+                                <th class="text-end">Missing</th>
+                                <th>Fill value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for column, details in report.missing_value_handling.columns_affected.items() %}
+                            <tr>
+                                <td>{{ column }}</td>
+                                <td class="text-end">{{ details.missing_count }}</td>
+                                <td>{{ details.fill_value }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="small text-muted mb-0">No missing values required imputation.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card app-card h-100">
+            <div class="card-header bg-white border-0 pt-4 px-4">
+                <h2 class="h5 fw-bold mb-1">Outlier detection</h2>
+            </div>
+            <div class="card-body px-4 pb-4">
+                <p class="small text-muted mb-3">
+                    Method: <strong>{{ report.outlier_detection.method|upper }}</strong> |
+                    Rows flagged: <strong>{{ report.outlier_detection.total_outlier_rows }}</strong>
+                    {% if report.outlier_detection.rows_removed %}
+                    | Rows removed: <strong>{{ report.outlier_detection.rows_removed }}</strong>
+                    {% endif %}
+                </p>
+                {% if report.outlier_detection.by_column %}
+                <div class="table-responsive">
+                    <table class="table table-sm mb-0">
+                        <thead>
+                            <tr>
+                                <th>Numeric column</th>
+                                <th class="text-end">Outliers</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for column, count in report.outlier_detection.by_column.items() %}
+                            <tr>
+                                <td>{{ column }}</td>
+                                <td class="text-end">{{ count }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="small text-muted mb-0">No outliers detected.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card app-card h-100">
+            <div class="card-header bg-white border-0 pt-4 px-4">
+                <h2 class="h5 fw-bold mb-1">Categorical encoding</h2>
+            </div>
+            <div class="card-body px-4 pb-4">
+                <p class="small text-muted mb-3">
+                    Method: <strong>{{ report.categorical_encoding.method|replace('_', ' ')|title }}</strong> |
+                    Features after encoding: <strong>{{ report.categorical_encoding.features_after_encoding }}</strong>
+                </p>
+                {% if report.categorical_encoding.categorical_columns %}
+                <div class="d-flex flex-wrap gap-2">
+                    {% for column in report.categorical_encoding.categorical_columns %}
+                    <span class="badge text-bg-light border">{{ column }}</span>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="small text-muted mb-0">No categorical columns detected.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card app-card h-100">
+            <div class="card-header bg-white border-0 pt-4 px-4">
+                <h2 class="h5 fw-bold mb-1">Feature scaling</h2>
+            </div>
+            <div class="card-body px-4 pb-4">
+                <p class="small text-muted mb-3">
+                    Method: <strong>{{ report.feature_scaling.method|title }}</strong>
+                </p>
+                {% if report.feature_scaling.scaled_columns %}
+                <div class="d-flex flex-wrap gap-2">
+                    {% for column in report.feature_scaling.scaled_columns %}
+                    <span class="badge text-bg-light border">{{ column }}</span>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="small text-muted mb-0">No columns were scaled.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card app-card h-100">
+            <div class="card-header bg-white border-0 pt-4 px-4">
+                <h2 class="h5 fw-bold mb-1">Train / test split</h2>
+            </div>
+            <div class="card-body px-4 pb-4">
+                <dl class="row small mb-0">
+                    <dt class="col-sm-5 text-muted">Test proportion</dt>
+                    <dd class="col-sm-7">{{ (report.train_test_split.test_size * 100)|round(0) }}%</dd>
+                    <dt class="col-sm-5 text-muted">Training rows</dt>
+                    <dd class="col-sm-7">{{ report.train_test_split.train_rows }}</dd>
+                    <dt class="col-sm-5 text-muted">Test rows</dt>
+                    <dd class="col-sm-7">{{ report.train_test_split.test_rows }}</dd>
+                    <dt class="col-sm-5 text-muted">Stratified</dt>
+                    <dd class="col-sm-7">{{ "Yes" if report.train_test_split.stratified else "No" }}</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card app-card h-100">
+            <div class="card-header bg-white border-0 pt-4 px-4">
+                <h2 class="h5 fw-bold mb-1">SMOTE</h2>
+            </div>
+            <div class="card-body px-4 pb-4">
+                {% if report.smote.applied %}
+                <p class="small text-muted">
+                    Training rows before: <strong>{{ report.smote.train_rows_before }}</strong> |
+                    after: <strong>{{ report.smote.train_rows_after }}</strong>
+                </p>
+                <div class="row small">
+                    <div class="col-md-6">
+                        <h3 class="h6 fw-semibold">Before</h3>
+                        <ul class="list-unstyled mb-0">
+                            {% for label, count in report.smote.class_distribution_before.items() %}
+                            <li>{{ label }}: {{ count }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h3 class="h6 fw-semibold">After</h3>
+                        <ul class="list-unstyled mb-0">
+                            {% for label, count in report.smote.class_distribution_after.items() %}
+                            <li>{{ label }}: {{ count }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                {% else %}
+                <p class="small text-muted mb-0">SMOTE was not applied to this preprocessing run.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12">
+        <div class="card app-card">
+            <div class="card-header bg-white border-0 pt-4 px-4">
+                <h2 class="h5 fw-bold mb-1">Final feature set</h2>
+                <p class="text-muted small mb-0">{{ report.final_features|length }} engineered features</p>
+            </div>
+            <div class="card-body px-4 pb-4">
+                <div class="d-flex flex-wrap gap-2">
+                    {% for feature in report.final_features %}
+                    <span class="badge text-bg-light border fw-normal">{{ feature }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

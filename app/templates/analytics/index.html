@@ -1,0 +1,155 @@
+{% extends "dashboard_base.html" %}
+
+{% block title %}Analytics | {{ config.APP_NAME }}{% endblock %}
+
+{% block page_title %}Analytics Dashboard{% endblock %}
+{% block page_subtitle %}Population-level prediction trends, risk insights, and model performance{% endblock %}
+
+{% block dashboard_content %}
+<div class="page-toolbar">
+    <a href="{{ url_for('main.dashboard') }}" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left me-1"></i>Back to dashboard
+    </a>
+    <a href="{{ url_for('predictions.history') }}" class="btn btn-outline-primary btn-sm">
+        <i class="bi bi-clock-history me-1"></i>Prediction history
+    </a>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-6 col-lg-3">
+        <div class="card app-card analytics-kpi-card h-100 fade-in-up">
+            <div class="card-body">
+                <div class="analytics-kpi-label">Total Predictions</div>
+                <div class="analytics-kpi-value text-primary">{{ dashboard.kpis.total_predictions }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card app-card analytics-kpi-card h-100">
+            <div class="card-body">
+                <div class="analytics-kpi-label">High Risk Patients</div>
+                <div class="analytics-kpi-value text-danger">{{ dashboard.kpis.high_risk_patients }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card app-card analytics-kpi-card h-100">
+            <div class="card-body">
+                <div class="analytics-kpi-label">Low Risk Patients</div>
+                <div class="analytics-kpi-value text-success">{{ dashboard.kpis.low_risk_patients }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card app-card analytics-kpi-card h-100">
+            <div class="card-body">
+                <div class="analytics-kpi-label">Avg Readmission Probability</div>
+                <div class="analytics-kpi-value text-info">{{ dashboard.kpis.average_probability_percent }}%</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-lg-5">
+        <div class="card app-card h-100">
+            <div class="card-header bg-white border-0 pt-4 px-4">
+                <h2 class="h6 fw-bold mb-1">Best Performing Model</h2>
+                <p class="text-muted small mb-0">Ranked by F1 score, ROC AUC, and accuracy</p>
+            </div>
+            <div class="card-body px-4 pb-4">
+                {% if dashboard.best_model %}
+                <div class="fw-semibold fs-5 mb-3">{{ dashboard.best_model.label }}</div>
+                <div class="row g-2">
+                    <div class="col-4">
+                        <div class="prediction-stat-card text-center">
+                            <div class="prediction-stat-label">F1</div>
+                            <div class="fw-bold">{{ (dashboard.best_model.f1_score * 100)|round(1) }}%</div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="prediction-stat-card text-center">
+                            <div class="prediction-stat-label">ROC AUC</div>
+                            <div class="fw-bold">
+                                {% if dashboard.best_model.roc_auc is not none %}
+                                {{ dashboard.best_model.roc_auc|round(3) }}
+                                {% else %}—{% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="prediction-stat-card text-center">
+                            <div class="prediction-stat-label">Accuracy</div>
+                            <div class="fw-bold">{{ (dashboard.best_model.accuracy * 100)|round(1) }}%</div>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <p class="text-muted mb-0">Train and evaluate at least one model to identify the best performer.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-7">
+        <div class="card app-card h-100">
+            <div class="card-header bg-white border-0 pt-4 px-4">
+                <h2 class="h6 fw-bold mb-1">Most Important Features</h2>
+                <p class="text-muted small mb-0">From the best performing model</p>
+            </div>
+            <div class="card-body p-3">
+                <div id="analytics-chart-feature-importance" class="plotly-chart"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-12 col-xl-8">
+        <div class="card app-card eda-chart-card">
+            <div class="card-header bg-white border-0 pt-4 px-4">
+                <h2 class="h6 fw-bold mb-0">Prediction Trends</h2>
+            </div>
+            <div class="card-body p-3">
+                <div id="analytics-chart-prediction-trends" class="plotly-chart"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-xl-4">
+        <div class="card app-card eda-chart-card h-100">
+            <div class="card-header bg-white border-0 pt-4 px-4">
+                <h2 class="h6 fw-bold mb-0">Risk Distribution</h2>
+            </div>
+            <div class="card-body p-3">
+                <div id="analytics-chart-risk-distribution" class="plotly-chart"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12">
+        <div class="card app-card eda-chart-card">
+            <div class="card-header bg-white border-0 pt-4 px-4">
+                <h2 class="h6 fw-bold mb-0">Monthly Statistics</h2>
+                <p class="text-muted small mb-0">Prediction volume, high-risk counts, and average probability by month</p>
+            </div>
+            <div class="card-body p-3">
+                <div id="analytics-chart-monthly-statistics" class="plotly-chart"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if not dashboard.has_data %}
+<div class="alert alert-light border mt-4 mb-0" role="alert">
+    <i class="bi bi-info-circle me-2"></i>
+    Generate patient predictions to populate trend charts and risk analytics.
+    <a href="{{ url_for('predictions.index') }}" class="alert-link">Create a prediction</a>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
+<script>
+    window.analyticsCharts = {{ dashboard.charts|tojson }};
+</script>
+<script src="{{ url_for('static', filename='js/analytics.js') }}"></script>
+{% endblock %}

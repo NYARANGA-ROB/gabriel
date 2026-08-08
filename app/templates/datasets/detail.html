@@ -1,0 +1,197 @@
+{% extends "dashboard_base.html" %}
+{% from "partials/_pagination.html" import render_pagination %}
+
+{% block title %}{{ dataset.original_filename }} | Datasets{% endblock %}
+
+{% block page_title %}{{ dataset.original_filename }}{% endblock %}
+{% block page_subtitle %}Dataset summary, feature overview, and paginated preview{% endblock %}
+
+{% block dashboard_content %}
+<div class="mb-3 d-flex flex-wrap gap-2">
+    <a href="{{ url_for('datasets.index') }}" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left me-1"></i>Back to datasets
+    </a>
+    <a href="{{ url_for('datasets.eda', dataset_id=dataset.id) }}" class="btn btn-outline-primary btn-sm">
+        <i class="bi bi-bar-chart-line me-1"></i>Exploratory analysis
+    </a>
+    <a href="{{ url_for('datasets.preprocess', dataset_id=dataset.id) }}" class="btn btn-primary btn-sm">
+        <i class="bi bi-sliders me-1"></i>Preprocess dataset
+    </a>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-xl-3">
+        <div class="overview-stat card app-card h-100">
+            <div class="card-body">
+                <div class="overview-stat-label">Rows</div>
+                <div class="overview-stat-value">{{ "{:,}".format(dataset.row_count) }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="overview-stat card app-card h-100">
+            <div class="card-body">
+                <div class="overview-stat-label">Columns</div>
+                <div class="overview-stat-value">{{ dataset.column_count }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="overview-stat card app-card h-100">
+            <div class="card-body">
+                <div class="overview-stat-label">Missing values</div>
+                <div class="overview-stat-value">{{ "{:,}".format(dataset.missing_values) }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="overview-stat card app-card h-100">
+            <div class="card-body">
+                <div class="overview-stat-label">Duplicate rows</div>
+                <div class="overview-stat-value">{{ "{:,}".format(dataset.duplicate_rows) }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-lg-7">
+        <div class="card app-card h-100">
+            <div class="card-header bg-white border-0 pt-4 px-4">
+                <h2 class="h5 fw-bold mb-1">Feature names</h2>
+                <p class="text-muted small mb-0">{{ dataset.feature_names|length }} variables detected</p>
+            </div>
+            <div class="card-body px-4 pb-4">
+                <div class="d-flex flex-wrap gap-2">
+                    {% for feature in dataset.feature_names %}
+                    <span class="badge rounded-pill text-bg-light border fw-normal px-3 py-2">
+                        {{ feature }}
+                    </span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-5">
+        <div class="card app-card h-100">
+            <div class="card-header bg-white border-0 pt-4 px-4">
+                <h2 class="h5 fw-bold mb-1">Missing values by column</h2>
+                <p class="text-muted small mb-0">Null count per feature</p>
+            </div>
+            <div class="card-body px-4 pb-4">
+                <div class="table-responsive dataset-missing-table">
+                    <table class="table table-sm align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Feature</th>
+                                <th class="text-end">Missing</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for feature, count in dataset.missing_by_column.items() %}
+                            <tr>
+                                <td>{{ feature }}</td>
+                                <td class="text-end">
+                                    {% if count > 0 %}
+                                    <span class="badge text-bg-warning">{{ count }}</span>
+                                    {% else %}
+                                    <span class="text-muted">0</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card app-card">
+    <div class="card-header bg-white border-0 pt-4 px-4 d-flex flex-column flex-md-row justify-content-between gap-2">
+        <div>
+            <h2 class="h5 fw-bold mb-1">Dataset preview</h2>
+            <p class="text-muted small mb-0">
+                Showing rows {{ preview.start_row }}–{{ preview.end_row }} of {{ "{:,}".format(preview.total_rows) }}
+            </p>
+        </div>
+        <span class="badge text-bg-light border align-self-md-center">
+            Page {{ preview.page }} of {{ preview.total_pages }}
+        </span>
+    </div>
+    <div class="card-body px-0 pb-4">
+        <div class="table-responsive dataset-preview-table">
+            <table class="table table-sm table-striped table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th class="preview-index">#</th>
+                        {% for column in preview.columns %}
+                        <th>{{ column }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in preview.rows %}
+                    <tr>
+                        <td class="preview-index text-muted">
+                            {{ preview.start_row + loop.index0 }}
+                        </td>
+                        {% for value in row %}
+                        <td>{{ value if value else "—" }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="px-4">
+            {{ render_pagination(preview, 'datasets.detail', {'dataset_id': dataset.id}) }}
+        </div>
+    </div>
+</div>
+
+{% if processed_runs %}
+<div class="card app-card mt-4">
+    <div class="card-header bg-white border-0 pt-4 px-4">
+        <h2 class="h5 fw-bold mb-1">Preprocessing runs</h2>
+        <p class="text-muted small mb-0">Stored processed datasets and reports</p>
+    </div>
+    <div class="card-body px-4 pb-4">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Run</th>
+                        <th>Target</th>
+                        <th>Features</th>
+                        <th>Rows</th>
+                        <th>Created</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for run in processed_runs %}
+                    <tr>
+                        <td class="fw-semibold">#{{ run.id }}</td>
+                        <td>{{ run.target_column }}</td>
+                        <td>{{ run.feature_count }}</td>
+                        <td>{{ "{:,}".format(run.row_count_processed) }}</td>
+                        <td class="text-muted small">{{ run.created_at.strftime('%d %b %Y, %H:%M') }}</td>
+                        <td class="text-end">
+                            <a href="{{ url_for('datasets.preprocess_report', dataset_id=dataset.id, processed_id=run.id) }}"
+                               class="btn btn-sm btn-outline-primary">
+                                View report
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,118 @@
+{% extends "dashboard_base.html" %}
+
+{% block title %}Admin Panel | {{ config.APP_NAME }}{% endblock %}
+
+{% block page_title %}Administration{% endblock %}
+{% block page_subtitle %}System overview, user management, and platform controls{% endblock %}
+
+{% block dashboard_content %}
+{% include "partials/_admin_nav.html" %}
+
+<div class="page-toolbar">
+    <a href="{{ url_for('main.dashboard') }}" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left me-1"></i>Main dashboard
+    </a>
+    <a href="{{ url_for('admin.reports_system_pdf') }}" class="btn btn-primary btn-sm">
+        <i class="bi bi-file-earmark-pdf me-1"></i>Download system report
+    </a>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-6 col-lg-3">
+        <div class="card app-card analytics-kpi-card h-100">
+            <div class="card-body">
+                <div class="analytics-kpi-label">Users</div>
+                <div class="analytics-kpi-value text-primary">{{ stats.users.total }}</div>
+                <div class="text-muted small">{{ stats.users.active }} active</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card app-card analytics-kpi-card h-100">
+            <div class="card-body">
+                <div class="analytics-kpi-label">Datasets</div>
+                <div class="analytics-kpi-value text-info">{{ stats.datasets.uploaded }}</div>
+                <div class="text-muted small">{{ stats.datasets.processed }} processed</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card app-card analytics-kpi-card h-100">
+            <div class="card-body">
+                <div class="analytics-kpi-label">Models</div>
+                <div class="analytics-kpi-value text-success">{{ stats.models.total }}</div>
+                <div class="text-muted small">{{ stats.models.completed }} completed</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card app-card analytics-kpi-card h-100">
+            <div class="card-body">
+                <div class="analytics-kpi-label">Prediction Logs</div>
+                <div class="analytics-kpi-value text-danger">{{ stats.predictions.total }}</div>
+                <div class="text-muted small">{{ stats.predictions.high_risk }} high risk</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="card app-card h-100">
+            <div class="card-header bg-white border-0 pt-4 px-4">
+                <h2 class="h6 fw-bold mb-1">Quick actions</h2>
+                <p class="text-muted small mb-0">Jump to common administration tasks</p>
+            </div>
+            <div class="card-body px-4 pb-4">
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('admin.users') }}" class="btn btn-outline-dark text-start">
+                        <i class="bi bi-people me-2"></i>Manage users &amp; roles
+                    </a>
+                    <a href="{{ url_for('admin.datasets') }}" class="btn btn-outline-dark text-start">
+                        <i class="bi bi-database me-2"></i>Review all datasets
+                    </a>
+                    <a href="{{ url_for('admin.predictions') }}" class="btn btn-outline-dark text-start">
+                        <i class="bi bi-clock-history me-2"></i>Audit prediction logs
+                    </a>
+                    <a href="{{ url_for('admin.models') }}" class="btn btn-outline-dark text-start">
+                        <i class="bi bi-cpu me-2"></i>Manage trained models
+                    </a>
+                    <a href="{{ url_for('admin.reports') }}" class="btn btn-outline-dark text-start">
+                        <i class="bi bi-file-earmark-bar-graph me-2"></i>View reports
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card app-card h-100">
+            <div class="card-header bg-white border-0 pt-4 px-4">
+                <h2 class="h6 fw-bold mb-1">System health</h2>
+                <p class="text-muted small mb-0">Platform activity snapshot</p>
+            </div>
+            <div class="card-body px-4 pb-4">
+                <dl class="row mb-0">
+                    <dt class="col-sm-6">Admin accounts</dt>
+                    <dd class="col-sm-6">{{ stats.users.admins }}</dd>
+                    <dt class="col-sm-6">Inactive users</dt>
+                    <dd class="col-sm-6">{{ stats.users.inactive }}</dd>
+                    <dt class="col-sm-6">Models in progress</dt>
+                    <dd class="col-sm-6">{{ stats.models.in_progress }}</dd>
+                    <dt class="col-sm-6">Moderate-risk predictions</dt>
+                    <dd class="col-sm-6">{{ stats.predictions.moderate_risk }}</dd>
+                    <dt class="col-sm-6">Low-risk predictions</dt>
+                    <dd class="col-sm-6">{{ stats.predictions.low_risk }}</dd>
+                    <dt class="col-sm-6">Latest prediction</dt>
+                    <dd class="col-sm-6">
+                        {% if stats.latest_prediction_at %}
+                        {{ stats.latest_prediction_at.strftime('%Y-%m-%d %H:%M UTC') }}
+                        {% else %}—{% endif %}
+                    </dd>
+                    <dt class="col-sm-6">Latest registered user</dt>
+                    <dd class="col-sm-6">{{ stats.latest_user_email or '—' }}</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

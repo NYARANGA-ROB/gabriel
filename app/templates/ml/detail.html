@@ -1,0 +1,320 @@
+{% extends "dashboard_base.html" %}
+
+{% block title %}{{ trained_model.model_name }} | ML Models{% endblock %}
+
+{% block page_title %}{{ trained_model.model_name }}{% endblock %}
+{% block page_subtitle %}Training run #{{ trained_model.id }}{% endblock %}
+
+{% block dashboard_content %}
+<div class="page-toolbar">
+    <a href="{{ url_for('ml.index') }}" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left me-1"></i>Back to models
+    </a>
+    {% if trained_model.status == 'completed' %}
+    <a href="{{ url_for('ml.retrain', model_id=trained_model.id) }}" class="btn btn-primary btn-sm">
+        <i class="bi bi-arrow-repeat me-1"></i>Retrain model
+    </a>
+    {% endif %}
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-lg-8">
+        <div class="card app-card">
+            <div class="card-header bg-white border-0 pt-4 px-4">
+                <h2 class="h5 fw-bold mb-1">Training progress</h2>
+                <p class="text-muted small mb-0" id="trainingStatusText">
+                    {% if trained_model.status == 'completed' %}
+                    Training and evaluation completed successfully.
+                    {% elif trained_model.status == 'failed' %}
+                    Training failed.
+                    {% else %}
+                    Training in progress...
+                    {% endif %}
+                </p>
+            </div>
+            <div class="card-body px-4 pb-4">
+                <div class="progress mb-3" style="height: 1.25rem;">
+                    <div class="progress-bar progress-bar-striped{% if trained_model.status in ['queued', 'training'] %} progress-bar-animated{% endif %}"
+                         id="trainingProgressBar"
+                         role="progressbar"
+                         style="width: {{ trained_model.progress_percent }}%;"
+                         aria-valuenow="{{ trained_model.progress_percent }}"
+                         aria-valuemin="0"
+                         aria-valuemax="100">
+                        <span id="trainingProgressLabel">{{ trained_model.progress_percent }}%</span>
+                    </div>
+                </div>
+                <ul class="list-group list-group-flush" id="trainingLogList">
+                    {% for entry in trained_model.progress_log %}
+                    <li class="list-group-item px-0 d-flex justify-content-between gap-3">
+                        <span>{{ entry.message }}</span>
+                        <span class="text-muted small">{{ entry.percent }}%</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% if trained_model.error_message %}
+                <div class="alert alert-danger mt-3 mb-0">{{ trained_model.error_message }}</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card app-card">
+            <div class="card-header bg-white border-0 pt-4 px-4">
+                <h2 class="h6 fw-bold mb-1">Run summary</h2>
+            </div>
+            <div class="card-body px-4 pb-4">
+                <dl class="row small mb-0">
+                    <dt class="col-5 text-muted">Status</dt>
+                    <dd class="col-7" id="modelStatusValue">{{ trained_model.status|title }}</dd>
+                    <dt class="col-5 text-muted">Dataset</dt>
+                    <dd class="col-7">{{ trained_model.processed_dataset.dataset.original_filename }}</dd>
+                    <dt class="col-5 text-muted">Target</dt>
+                    <dd class="col-7">{{ trained_model.processed_dataset.target_column }}</dd>
+                    <dt class="col-5 text-muted">Training data</dt>
+                    <dd class="col-7">{{ trained_model.training_data_source|replace('_', ' ')|title }}</dd>
+                    <dt class="col-5 text-muted">Created</dt>
+                    <dd class="col-7">{{ trained_model.created_at.strftime('%d %b %Y, %H:%M') }}</dd>
+                    {% if trained_model.completed_at %}
+                    <dt class="col-5 text-muted">Completed</dt>
+                    <dd class="col-7">{{ trained_model.completed_at.strftime('%d %b %Y, %H:%M') }}</dd>
+                    {% endif %}
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if evaluation %}
+<section class="mb-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-3">
+        <div>
+            <h2 class="h4 fw-bold mb-1">Model evaluation</h2>
+            <p class="text-muted mb-0">Hold-out test performance and diagnostic charts</p>
+        </div>
+        <span class="badge text-bg-light border">
+            Evaluated {{ evaluation.evaluated_at.strftime('%d %b %Y, %H:%M') }}
+        </span>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="card app-card h-100 eval-metric-card">
+                <div class="card-body text-center p-3">
+                    <div class="eval-metric-label">Accuracy</div>
+                    <div class="eval-metric-value text-primary">{{ (evaluation.accuracy * 100)|round(2) }}%</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="card app-card h-100 eval-metric-card">
+                <div class="card-body text-center p-3">
+                    <div class="eval-metric-label">Precision</div>
+                    <div class="eval-metric-value text-success">{{ (evaluation.precision * 100)|round(2) }}%</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="card app-card h-100 eval-metric-card">
+                <div class="card-body text-center p-3">
+                    <div class="eval-metric-label">Recall</div>
+                    <div class="eval-metric-value text-info">{{ (evaluation.recall * 100)|round(2) }}%</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="card app-card h-100 eval-metric-card">
+                <div class="card-body text-center p-3">
+                    <div class="eval-metric-label">F1 Score</div>
+                    <div class="eval-metric-value text-warning">{{ (evaluation.f1_score * 100)|round(2) }}%</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="card app-card h-100 eval-metric-card">
+                <div class="card-body text-center p-3">
+                    <div class="eval-metric-label">ROC AUC</div>
+                    <div class="eval-metric-value text-danger">
+                        {% if evaluation.roc_auc is not none %}{{ evaluation.roc_auc|round(3) }}{% else %}—{% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="card app-card h-100 eval-metric-card">
+                <div class="card-body text-center p-3">
+                    <div class="eval-metric-label">Test samples</div>
+                    <div class="eval-metric-value">{{ evaluation.metrics.test_samples }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-6">
+            <div class="card app-card h-100">
+                <div class="card-header bg-white border-0 pt-4 px-4">
+                    <h3 class="h6 fw-bold mb-0"><i class="bi bi-stopwatch me-2 text-primary"></i>Training time</h3>
+                </div>
+                <div class="card-body px-4 pb-4">
+                    <div class="display-6 fw-bold">{{ (evaluation.training_time_seconds * 1000)|round(1) }} ms</div>
+                    <p class="text-muted small mb-0">{{ evaluation.training_time_seconds|round(4) }} seconds</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card app-card h-100">
+                <div class="card-header bg-white border-0 pt-4 px-4">
+                    <h3 class="h6 fw-bold mb-0"><i class="bi bi-lightning me-2 text-primary"></i>Prediction time</h3>
+                </div>
+                <div class="card-body px-4 pb-4">
+                    <div class="display-6 fw-bold">{{ (evaluation.prediction_time_seconds * 1000)|round(2) }} ms</div>
+                    <p class="text-muted small mb-0">{{ evaluation.prediction_time_seconds|round(6) }} seconds on test set</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-6">
+            <div class="card app-card eda-chart-card h-100">
+                <div class="card-body p-3">
+                    <div id="eval-chart-confusion-matrix" class="plotly-chart"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card app-card eda-chart-card h-100">
+                <div class="card-body p-3">
+                    <div id="eval-chart-normalized-cm" class="plotly-chart"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card app-card eda-chart-card h-100">
+                <div class="card-body p-3">
+                    <div id="eval-chart-roc-curve" class="plotly-chart"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card app-card eda-chart-card h-100">
+                <div class="card-body p-3">
+                    <div id="eval-chart-pr-curve" class="plotly-chart"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card app-card eda-chart-card h-100">
+                <div class="card-body p-3">
+                    <div id="eval-chart-calibration" class="plotly-chart"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card app-card eda-chart-card h-100">
+                <div class="card-body p-3">
+                    <div id="eval-chart-prediction-dist" class="plotly-chart"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="card app-card eda-chart-card">
+                <div class="card-body p-3">
+                    <div id="eval-chart-feature-importance" class="plotly-chart"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<div class="card app-card mb-4">
+    <div class="card-header bg-white border-0 pt-4 px-4">
+        <h2 class="h5 fw-bold mb-1">Model parameters</h2>
+    </div>
+    <div class="card-body px-4 pb-4">
+        <div class="table-responsive">
+            <table class="table table-sm mb-0">
+                <thead>
+                    <tr>
+                        <th>Parameter</th>
+                        <th>Value</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for key, value in trained_model.parameters.items() %}
+                    <tr>
+                        <td class="fw-semibold">{{ key }}</td>
+                        <td>{{ value }}</td>
+                        <td class="text-muted small">
+                            {{ model_registry[trained_model.model_type].parameter_help.get(key, '') }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% if evaluation_history %}
+<div class="card app-card">
+    <div class="card-header bg-white border-0 pt-4 px-4">
+        <h2 class="h5 fw-bold mb-1">Evaluation history</h2>
+        <p class="text-muted small mb-0">{{ evaluation_history|length }} recorded evaluation(s)</p>
+    </div>
+    <div class="card-body px-4 pb-4">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Run</th>
+                        <th>Accuracy</th>
+                        <th>Precision</th>
+                        <th>Recall</th>
+                        <th>F1</th>
+                        <th>ROC AUC</th>
+                        <th>Train time</th>
+                        <th>Pred time</th>
+                        <th>Evaluated</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in evaluation_history %}
+                    <tr{% if evaluation and record.id == evaluation.id %} class="table-primary"{% endif %}>
+                        <td class="fw-semibold">#{{ record.id }}</td>
+                        <td>{{ (record.accuracy * 100)|round(1) }}%</td>
+                        <td>{{ (record.precision * 100)|round(1) }}%</td>
+                        <td>{{ (record.recall * 100)|round(1) }}%</td>
+                        <td>{{ (record.f1_score * 100)|round(1) }}%</td>
+                        <td>{% if record.roc_auc is not none %}{{ record.roc_auc|round(3) }}{% else %}—{% endif %}</td>
+                        <td>{{ (record.training_time_seconds * 1000)|round(1) }} ms</td>
+                        <td>{{ (record.prediction_time_seconds * 1000)|round(2) }} ms</td>
+                        <td class="text-muted small">{{ record.evaluated_at.strftime('%d %b %Y, %H:%M') }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+{% if evaluation %}
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
+<script>
+    window.mlEvaluationCharts = {{ evaluation.charts|tojson }};
+</script>
+<script src="{{ url_for('static', filename='js/ml_evaluation.js') }}"></script>
+{% endif %}
+<script>
+    window.mlTrainingStatusUrl = "{{ url_for('ml.status', model_id=trained_model.id) }}";
+    window.mlInitialStatus = "{{ trained_model.status }}";
+</script>
+<script src="{{ url_for('static', filename='js/ml_training.js') }}"></script>
+{% endblock %}

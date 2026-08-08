@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% from "partials/_form_macros.html" import render_field %}
+
+{% block title %}Register | {{ config.APP_NAME }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center auth-page">
+    <div class="col-md-8 col-lg-6">
+        <div class="card auth-card app-card">
+            <div class="card-body p-4 p-md-5">
+                <div class="text-center mb-4">
+                    <div class="auth-icon mb-3">
+                        <i class="bi bi-person-plus"></i>
+                    </div>
+                    <h1 class="h3 fw-bold">Create your account</h1>
+                    <p class="text-muted mb-0">
+                        Register to use the readmission risk prediction framework.
+                    </p>
+                </div>
+
+                <form method="POST" action="{{ url_for('auth.register') }}" novalidate>
+                    {{ form.hidden_tag() }}
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            {{ render_field(form.first_name, "person") }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ render_field(form.last_name, "person") }}
+                        </div>
+                    </div>
+
+                    {{ render_field(form.email, "envelope") }}
+                    {{ render_field(form.password, "key") }}
+                    {{ render_field(form.confirm_password, "key-fill") }}
+
+                    <p class="form-text mb-4">
+                        Password must be at least 8 characters and include letters and numbers.
+                    </p>
+
+                    {{ form.submit(class="btn btn-primary w-100 py-2") }}
+                </form>
+
+                <p class="text-center text-muted mt-4 mb-0">
+                    Already have an account?
+                    <a href="{{ url_for('auth.login') }}" class="fw-semibold">Sign in</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
